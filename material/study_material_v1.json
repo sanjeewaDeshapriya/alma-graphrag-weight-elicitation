@@ -1,0 +1,576 @@
+{
+  "version": "v2-liteapi-20260803",
+  "city": "Colombo",
+  "source": "liteapi",
+  "generated_at": "2026-08-03T16:59:09.890965Z",
+  "dimensions": [
+    "spatial",
+    "accessibility",
+    "facility",
+    "economic",
+    "disruption"
+  ],
+  "hotels": {
+    "lp102b02": {
+      "name": "Marino Beach Colombo",
+      "attributes": {
+        "price_lkr": 29976,
+        "rating": 4.6,
+        "review_count": 13008,
+        "star": 5,
+        "distance_km": 3.2,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "590 Marine Drive",
+        "image": "https://static.cupid.travel/hotels/155542490.jpg",
+        "description": "Luxurious Amenities and Services Marino Beach Colombo boasts an array of upscale amenities, including an outdoor swimming pool, fitness centre, and a garden terrace. Gues"
+      },
+      "components": {
+        "spatial": 0.0,
+        "accessibility": 0.3,
+        "facility": 0.984,
+        "economic": 0.625,
+        "disruption": 1.0
+      }
+    },
+    "lp6557c6e0": {
+      "name": "Granbell Hotel Colombo",
+      "attributes": {
+        "price_lkr": 35144,
+        "rating": 4.6,
+        "review_count": 8645,
+        "star": 4,
+        "distance_km": 2.3,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "282/5",
+        "image": "https://static.cupid.travel/hotels/344223041.jpg",
+        "description": "Luxurious Accommodation Granbell Hotel Colombo, located in the heart of Colombo, offers a luxurious stay just steps away from Kollupitiya Beach. The guest rooms are elega"
+      },
+      "components": {
+        "spatial": 0.125,
+        "accessibility": 0.369,
+        "facility": 0.894,
+        "economic": 0.438,
+        "disruption": 0.845
+      }
+    },
+    "lp741c5": {
+      "name": "Cinnamon Red Colombo",
+      "attributes": {
+        "price_lkr": 34125,
+        "rating": 4.5,
+        "review_count": 5284,
+        "star": 4,
+        "distance_km": 1.9,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "Colombo 03",
+        "image": "https://static.cupid.travel/hotels/563151658.jpg",
+        "description": "Modern Accommodation with Rooftop Pool Cinnamon red Colombo, conveniently situated in Colombo, offers contemporary accommodation with free WiFi access. Guests can relax a"
+      },
+      "components": {
+        "spatial": 0.562,
+        "accessibility": 0.656,
+        "facility": 0.89,
+        "economic": 0.5,
+        "disruption": 0.583
+      }
+    },
+    "lp9855f": {
+      "name": "Fairway Colombo - Sri Lanka's First Hotel With Robot Technology",
+      "attributes": {
+        "price_lkr": 28858,
+        "rating": 4.2,
+        "review_count": 3329,
+        "star": 4,
+        "distance_km": 2.1,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar",
+          "Room service"
+        ],
+        "area": "Colombo 01",
+        "image": "https://static.cupid.travel/hotels/199251849.jpg",
+        "description": "Luxurious Accommodation Fairway Colombo offers elegantly designed rooms with air conditioning and flat-screen TVs, providing a comfortable stay for guests. Each room is e"
+      },
+      "components": {
+        "spatial": 0.375,
+        "accessibility": 0.506,
+        "facility": 0.878,
+        "economic": 0.688,
+        "disruption": 0.695
+      }
+    },
+    "lp655a9e91": {
+      "name": "Zest Metropole",
+      "attributes": {
+        "price_lkr": 26932,
+        "rating": 4.3,
+        "review_count": 2722,
+        "star": 4,
+        "distance_km": 2.0,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Room service",
+          "Free parking"
+        ],
+        "area": "43 Hospital Street",
+        "image": "https://static.cupid.travel/hotels/376877372.jpg",
+        "description": "Central Location in Colombo Situated in the heart of Colombo, Zest Metropole offers comfortable rooms with city views, just steps away from popular attractions like Galle"
+      },
+      "components": {
+        "spatial": 0.5,
+        "accessibility": 0.575,
+        "facility": 0.882,
+        "economic": 0.75,
+        "disruption": 0.62
+      }
+    },
+    "lp656d3aa9": {
+      "name": "Sofia Colombo City Hotel",
+      "attributes": {
+        "price_lkr": 23891,
+        "rating": 4.3,
+        "review_count": 2535,
+        "star": 4,
+        "distance_km": 2.4,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "295a Galle Road",
+        "image": "https://static.cupid.travel/hotels/612428359.jpg",
+        "description": "Convenient Location near Beaches Sofia Colombo City Hotel is ideally situated just 200 meters from Kollupitiya Beach and 500 meters from Bambalapitiya Beach, offering gue"
+      },
+      "components": {
+        "spatial": 0.062,
+        "accessibility": 0.25,
+        "facility": 0.882,
+        "economic": 0.812,
+        "disruption": 0.883
+      }
+    },
+    "lp803e1": {
+      "name": "Galle Face Hotel",
+      "attributes": {
+        "price_lkr": 33802,
+        "rating": 4.5,
+        "review_count": 2451,
+        "star": 4,
+        "distance_km": 1.8,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "2",
+        "image": "https://static.cupid.travel/hotels/102283740.jpg",
+        "description": "Historic Charm and Modern Luxury Ocean Views and Comfortable Amenities The rooms at Galle Face Hotel offer stunning views of the Indian Ocean, Galle Face Green, or Colomb"
+      },
+      "components": {
+        "spatial": 0.75,
+        "accessibility": 0.712,
+        "facility": 0.89,
+        "economic": 0.562,
+        "disruption": 0.47
+      }
+    },
+    "lp1c1ea": {
+      "name": "Cinnamon Grand Colombo",
+      "attributes": {
+        "price_lkr": 55024,
+        "rating": 4.7,
+        "review_count": 2279,
+        "star": 5,
+        "distance_km": 1.8,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "77 Galle Road",
+        "image": "https://static.cupid.travel/hotels/543025919.jpg",
+        "description": "Luxurious 5-Star City Hotel in the Heart of Colombo Award-Winning Spa and Multiple Dining Options Indulge in relaxation at the award-winning spa or savor a culinary journ"
+      },
+      "components": {
+        "spatial": 0.75,
+        "accessibility": 0.694,
+        "facility": 0.988,
+        "economic": 0.062,
+        "disruption": 0.55
+      }
+    },
+    "lpb1537": {
+      "name": "Shangri-La Colombo",
+      "attributes": {
+        "price_lkr": 69435,
+        "rating": 4.7,
+        "review_count": 2131,
+        "star": 5,
+        "distance_km": 1.9,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "Colombo 02",
+        "image": "https://static.cupid.travel/hotels/295690735.jpg",
+        "description": "Luxurious Accommodations with Stunning Views Shangri-La Colombo offers a luxurious stay in the heart of the city, with guestrooms featuring breathtaking views of the Indi"
+      },
+      "components": {
+        "spatial": 0.562,
+        "accessibility": 0.544,
+        "facility": 0.988,
+        "economic": 0.0,
+        "disruption": 0.663
+      }
+    },
+    "lp3e58e": {
+      "name": "The Kingsbury Colombo",
+      "attributes": {
+        "price_lkr": 39666,
+        "rating": 4.2,
+        "review_count": 2049,
+        "star": 5,
+        "distance_km": 2.2,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "No 48 Janadhipathi Mawatha",
+        "image": "https://static.cupid.travel/hotels/559618093.jpg",
+        "description": "Spectacular Views and Regal Accommodation Experience luxury at its finest with breathtaking views of the Colombo Harbor and Galle Face Green from elegantly-designed rooms"
+      },
+      "components": {
+        "spatial": 0.188,
+        "accessibility": 0.262,
+        "facility": 0.968,
+        "economic": 0.25,
+        "disruption": 0.887
+      }
+    },
+    "lp30277": {
+      "name": "Hilton Colombo Residence",
+      "attributes": {
+        "price_lkr": 52845,
+        "rating": 4.4,
+        "review_count": 1829,
+        "star": 5,
+        "distance_km": 0.9,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "200 Union Place",
+        "image": "https://static.cupid.travel/hotels/483815281.jpg",
+        "description": "Luxurious Suites with Panoramic Views Experience breathtaking views of Colombo city, the harbour, or the Indian Ocean from our spacious rooms and suites at Hilton Colombo"
+      },
+      "components": {
+        "spatial": 0.938,
+        "accessibility": 0.769,
+        "facility": 0.976,
+        "economic": 0.125,
+        "disruption": 0.438
+      }
+    },
+    "lp33ddb": {
+      "name": "Taj Samudra, Colombo",
+      "attributes": {
+        "price_lkr": 36617,
+        "rating": 4.5,
+        "review_count": 1492,
+        "star": 5,
+        "distance_km": 1.7,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "25",
+        "image": "https://static.cupid.travel/hotels/32900441.jpg",
+        "description": "Stunning Views and Luxurious Amenities Ocean Views and City Skyline : Enjoy breathtaking views of the Indian Ocean or the city skyline from the comfort of your room at Ta"
+      },
+      "components": {
+        "spatial": 0.875,
+        "accessibility": 0.706,
+        "facility": 0.98,
+        "economic": 0.375,
+        "disruption": 0.475
+      }
+    },
+    "lp1bc0d": {
+      "name": "Hilton Colombo Hotel",
+      "attributes": {
+        "price_lkr": 44798,
+        "rating": 4.2,
+        "review_count": 1418,
+        "star": 5,
+        "distance_km": 1.9,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "Colombo 02",
+        "image": "https://static.cupid.travel/hotels/521337940.jpg",
+        "description": "Luxurious Accommodation with Stunning Views Overlooking the Indian Ocean and Beira Lake, Hilton Colombo Hotel offers spacious rooms with over-sized windows, marble bathro"
+      },
+      "components": {
+        "spatial": 0.562,
+        "accessibility": 0.469,
+        "facility": 0.968,
+        "economic": 0.188,
+        "disruption": 0.663
+      }
+    },
+    "lp6574b103": {
+      "name": "Amari Colombo, Sri Lanka",
+      "attributes": {
+        "price_lkr": 38674,
+        "rating": 4.5,
+        "review_count": 963,
+        "star": 5,
+        "distance_km": 2.2,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "254 Galle Road",
+        "image": "https://static.cupid.travel/hotels/599799251.jpg",
+        "description": "Luxurious Accommodation - The rooms at Amari Colombo, Sri Lanka are elegantly designed and equipped with modern amenities for a comfortable stay. Dining Experience - Indu"
+      },
+      "components": {
+        "spatial": 0.188,
+        "accessibility": 0.187,
+        "facility": 0.98,
+        "economic": 0.312,
+        "disruption": 0.887
+      }
+    },
+    "lp81760": {
+      "name": "The Steuart by Citrus",
+      "attributes": {
+        "price_lkr": 19630,
+        "rating": 4.2,
+        "review_count": 875,
+        "star": 4,
+        "distance_km": 2.2,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Bar",
+          "Room service",
+          "Free parking"
+        ],
+        "area": "Colombo 01",
+        "image": "https://static.cupid.travel/hotels/113078166.jpg",
+        "description": "Prime Location in Colombo's CBD: Strategically situated in the bustling central business district, The Steuart by Citrus offers convenient access to key attractions and b"
+      },
+      "components": {
+        "spatial": 0.188,
+        "accessibility": 0.169,
+        "facility": 0.878,
+        "economic": 0.875,
+        "disruption": 0.808
+      }
+    },
+    "lpc08f9": {
+      "name": "Morven Hotel Colombo",
+      "attributes": {
+        "price_lkr": 19299,
+        "rating": 4.5,
+        "review_count": 621,
+        "star": 4,
+        "distance_km": 2.1,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "No. 213",
+        "image": "https://static.cupid.travel/hotels/199611049.jpg",
+        "description": "Luxurious Accommodation Morven Hotel Colombo, located in Colombo, offers a luxurious stay just 600 meters from the U.S. Embassy. The hotel boasts an outdoor swimming pool"
+      },
+      "components": {
+        "spatial": 0.375,
+        "accessibility": 0.281,
+        "facility": 0.89,
+        "economic": 0.938,
+        "disruption": 0.695
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "budget_backpacker",
+      "persona": "Budget backpacker",
+      "primary_dimension": "economic",
+      "context": "You are a solo backpacker travelling on a tight budget. You mainly need a cheap, safe place to sleep and don't mind basic facilities or being a short ride from the centre. Which hotel would you book?"
+    },
+    {
+      "id": "business_accessibility",
+      "persona": "Business traveller",
+      "primary_dimension": "accessibility",
+      "context": "You are in Colombo for two days of back-to-back meetings in the Fort business district. You want to reach your meetings quickly with the shortest, most reliable travel. Which hotel would you book?"
+    },
+    {
+      "id": "family_facility",
+      "persona": "Family on holiday",
+      "primary_dimension": "facility",
+      "context": "You are travelling with your family and young children for a short holiday. Good facilities matter most — a pool, space and amenities. Your budget is comfortable but not unlimited. Which hotel would you book?"
+    },
+    {
+      "id": "quiet_seeker",
+      "persona": "Light sleeper",
+      "primary_dimension": "disruption",
+      "context": "You are a light sleeper who dislikes traffic noise and crowds. You want a calm, peaceful stay away from the busy, noisy areas — even if it is a little further out. Which hotel would you book?"
+    },
+    {
+      "id": "sightseer",
+      "persona": "City sightseer",
+      "primary_dimension": "spatial",
+      "context": "You are a tourist who wants to be central and close to Colombo's main attractions and the seafront. Being in the middle of the action matters most. Which hotel would you book?"
+    },
+    {
+      "id": "attention",
+      "persona": "Attention check",
+      "primary_dimension": "attention",
+      "context": "This is an attention check. Please ignore your own preferences and simply select the hotel named \"Marino Beach Colombo\"."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "scenario_id": "budget_backpacker",
+      "is_attention_check": false,
+      "option_ids": [
+        "lp9855f",
+        "lp102b02",
+        "lp30277",
+        "lpb1537",
+        "lp81760"
+      ]
+    },
+    {
+      "id": "t2",
+      "scenario_id": "business_accessibility",
+      "is_attention_check": false,
+      "option_ids": [
+        "lp656d3aa9",
+        "lp81760",
+        "lpb1537",
+        "lp30277",
+        "lp102b02"
+      ]
+    },
+    {
+      "id": "t3",
+      "scenario_id": "family_facility",
+      "is_attention_check": false,
+      "option_ids": [
+        "lp741c5",
+        "lp81760",
+        "lp102b02",
+        "lpb1537",
+        "lp30277"
+      ]
+    },
+    {
+      "id": "t4",
+      "scenario_id": "quiet_seeker",
+      "is_attention_check": false,
+      "option_ids": [
+        "lp81760",
+        "lp102b02",
+        "lp1bc0d",
+        "lp30277",
+        "lpb1537"
+      ]
+    },
+    {
+      "id": "t5",
+      "scenario_id": "sightseer",
+      "is_attention_check": false,
+      "option_ids": [
+        "lp30277",
+        "lp3e58e",
+        "lp81760",
+        "lpb1537",
+        "lp102b02"
+      ]
+    },
+    {
+      "id": "t6",
+      "scenario_id": "attention",
+      "is_attention_check": true,
+      "attention_answer_hotel_id": "lp102b02",
+      "option_ids": [
+        "lp6557c6e0",
+        "lp656d3aa9",
+        "lp102b02",
+        "lpc08f9",
+        "lp30277"
+      ]
+    }
+  ]
+}
