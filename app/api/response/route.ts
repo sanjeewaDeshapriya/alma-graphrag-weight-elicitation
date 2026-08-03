@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { insertResponse } from "@/lib/db";
+import { insertResponse, storageHint } from "@/lib/db";
 import { getResolvedTask } from "@/lib/material";
 
 /**
@@ -32,19 +32,27 @@ export async function POST(request: Request) {
     ? chosenHotelId === task.attention_answer_hotel_id
     : null;
 
-  await insertResponse({
-    participantId,
-    taskId,
-    scenarioId: task.scenario.id,
-    chosenHotelId,
-    options: task.options.map((o) => ({
-      hotel_id: o.hotel_id,
-      components: o.components,
-    })),
-    isAttentionCheck: task.is_attention_check,
-    attentionPass,
-    timing: timing ?? {},
-  });
+  try {
+    await insertResponse({
+      participantId,
+      taskId,
+      scenarioId: task.scenario.id,
+      chosenHotelId,
+      options: task.options.map((o) => ({
+        hotel_id: o.hotel_id,
+        components: o.components,
+      })),
+      isAttentionCheck: task.is_attention_check,
+      attentionPass,
+      timing: timing ?? {},
+    });
+  } catch (err) {
+    console.error("insertResponse failed:", err);
+    return NextResponse.json(
+      { error: "storage_failed", hint: storageHint() },
+      { status: 500 },
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -17,6 +17,20 @@ type Sql = Postgres.Sql;
 const DATABASE_URL = process.env.DATABASE_URL;
 export const usingDatabase = Boolean(DATABASE_URL);
 
+// On Vercel/any serverless host the filesystem is read-only, so the JSONL
+// fallback cannot work there — a missing DATABASE_URL is a configuration error.
+const IS_SERVERLESS = Boolean(process.env.VERCEL || process.env.AWS_REGION);
+
+/** Human-readable hint for why a persistence call may have failed. */
+export function storageHint(): string {
+  if (!DATABASE_URL) {
+    return IS_SERVERLESS
+      ? "DATABASE_URL is not set. Add it in your Vercel project → Settings → Environment Variables (a Neon pooled connection string), then redeploy."
+      : "DATABASE_URL is not set (using local ./data JSONL fallback).";
+  }
+  return "Database write failed. Check the DATABASE_URL is correct and that sql/schema.sql has been applied to it.";
+}
+
 let _sql: Sql | null = null;
 async function getSql(): Promise<Sql> {
   if (!_sql) {
@@ -29,6 +43,10 @@ async function getSql(): Promise<Sql> {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 function appendJsonl(file: string, row: unknown): void {
+  if (IS_SERVERLESS) {
+    // Read-only FS on Vercel — never silently lose data; fail with a clear cause.
+    throw new Error(storageHint());
+  }
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.appendFileSync(path.join(DATA_DIR, file), JSON.stringify(row) + "\n");
 }

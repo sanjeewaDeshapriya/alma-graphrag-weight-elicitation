@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
-import { createParticipant, updateDemographics } from "@/lib/db";
+import { createParticipant, updateDemographics, storageHint } from "@/lib/db";
 import { loadMaterial } from "@/lib/material";
 
 /** Create a participant after consent. Returns the anonymous participant id. */
@@ -11,12 +11,20 @@ export async function POST(request: Request) {
   }
   const id = randomUUID();
   const material = loadMaterial();
-  await createParticipant({
-    id,
-    consent: true,
-    materialVersion: material.version,
-    userAgent: request.headers.get("user-agent") ?? "",
-  });
+  try {
+    await createParticipant({
+      id,
+      consent: true,
+      materialVersion: material.version,
+      userAgent: request.headers.get("user-agent") ?? "",
+    });
+  } catch (err) {
+    console.error("createParticipant failed:", err);
+    return NextResponse.json(
+      { error: "storage_failed", hint: storageHint() },
+      { status: 500 },
+    );
+  }
   return NextResponse.json({ participantId: id, version: material.version });
 }
 
@@ -26,6 +34,14 @@ export async function PUT(request: Request) {
   if (!body?.participantId) {
     return NextResponse.json({ error: "participantId required" }, { status: 400 });
   }
-  await updateDemographics(body.participantId, body.demographics ?? {});
+  try {
+    await updateDemographics(body.participantId, body.demographics ?? {});
+  } catch (err) {
+    console.error("updateDemographics failed:", err);
+    return NextResponse.json(
+      { error: "storage_failed", hint: storageHint() },
+      { status: 500 },
+    );
+  }
   return NextResponse.json({ ok: true });
 }

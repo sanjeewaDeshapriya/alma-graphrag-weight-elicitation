@@ -18,7 +18,10 @@ export default function ConsentForm() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ consent: true }),
       });
-      if (!res.ok) throw new Error(`session failed (${res.status})`);
+      if (!res.ok) {
+        const info = await res.json().catch(() => ({}));
+        throw new Error(info.hint ?? `session failed (${res.status})`);
+      }
       const data = await res.json();
       sessionStorage.setItem("participantId", data.participantId);
       sessionStorage.setItem("materialVersion", data.version);
