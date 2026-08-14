@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { DisplayTask, DisplayOption } from "@/lib/material";
 
@@ -8,13 +8,33 @@ interface Props {
   tasks: DisplayTask[];
 }
 
-/** Per-task timing accumulator, kept in a ref so it never triggers re-renders. */
+type SortKey = "distance" | "travel" | "price_asc" | "price_desc" | "rating";
+
+const SORT_LABELS: Record<SortKey, string> = {
+  distance: "Nearest first",
+  travel: "Fastest to reach",
+  price_asc: "Cheapest first",
+  price_desc: "Most expensive first",
+  rating: "Highest rated",
+};
+
+/** One recorded UI action. The order and timing of these is data, not telemetry:
+ *  a participant who sorts by price before choosing is telling us something the
+ *  final click alone does not. */
+interface Interaction {
+  at_ms: number;
+  kind: "search" | "sort" | "price_filter" | "reset";
+  value: string;
+}
+
+/** Per-task accumulator, kept in a ref so it never triggers re-renders. */
 interface TaskTiming {
-  renderedAt: number; // performance.now() when the task mounted
+  renderedAt: number;
   firstInteractionAt: number | null;
-  dwellMs: Record<string, number>; // accumulated hover/focus time per hotel
+  dwellMs: Record<string, number>;
   hoverStart: { id: string; at: number } | null;
-  revisions: number; // how many times the selection changed
+  revisions: number;
+  interactions: Interaction[];
 }
 
 function freshTiming(): TaskTiming {
@@ -25,6 +45,7 @@ function freshTiming(): TaskTiming {
     dwellMs: {},
     hoverStart: null,
     revisions: 0,
+    interactions: [],
   };
 }
 
@@ -34,6 +55,13 @@ export default function StudyClient({ tasks }: Props) {
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Browsing controls. `sort` starts at "distance" so the list opens ordered by
+  // proximity to the task's anchor, which is the behaviour the study specifies.
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("distance");
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+
   const timing = useRef<TaskTiming>(freshTiming());
 
   useEffect(() => {
@@ -45,10 +73,13 @@ export default function StudyClient({ tasks }: Props) {
     setPid(id);
   }, [router]);
 
-  // Reset timing whenever a new task is shown.
+  // Reset everything whenever a new task is shown.
   useEffect(() => {
     timing.current = freshTiming();
     setSelected(null);
+    setQuery("");
+    setSort("distance");
+    setMaxPrice(null);
   }, [idx]);
 
   const now = () =>
@@ -59,6 +90,18 @@ export default function StudyClient({ tasks }: Props) {
       timing.current.firstInteractionAt = now() - timing.current.renderedAt;
     }
   }, []);
+
+  const logInteraction = useCallback(
+    (kind: Interaction["kind"], value: string) => {
+      markInteraction();
+      timing.current.interactions.push({
+        at_ms: Math.round(now() - timing.current.renderedAt),
+        kind,
+        value,
+      });
+    },
+    [markInteraction],
+  );
 
   const onHoverStart = useCallback(
     (id: string) => {
@@ -88,28 +131,85 @@ export default function StudyClient({ tasks }: Props) {
     [markInteraction],
   );
 
-  async function submit() {
-    if (!selected || !pid) return;
-    setSubmitting(true);
+  const task = tasks[idx];
 
-    // close any open hover dwell
+  const priceCeiling = useMemo(() => {
+    if (!task) return 0;
+    return Math.max(...task.options.map((o) => o.attributes.price_lkr));
+  }, [task]);
+
+  /** The list actually on screen. Its index order is what gets recorded as the
+   *  displayed position of every candidate. */
+  const visible = useMemo(() => {
+    if (!task) return [] as DisplayOption[];
+    const q = query.trim().toLowerCase();
+    let list = task.options.filter((o) => {
+      if (maxPrice !== null && o.attributes.price_lkr > maxPrice) return false;
+      if (!q) return true;
+      return (
+        o.name.toLowerCase().includes(q) ||
+        o.attributes.area.toLowerCase().includes(q) ||
+        o.attributes.amenities.some((a) => a.toLowerCase().includes(q))
+      );
+    });
+    list = [...list];
+    switch (sort) {
+      case "distance":
+        list.sort((a, b) => a.anchor_distance_km - b.anchor_distance_km);
+        break;
+      case "travel":
+        list.sort((a, b) => a.anchor_travel_min - b.anchor_travel_min);
+        break;
+      case "price_asc":
+        list.sort((a, b) => a.attributes.price_lkr - b.attributes.price_lkr);
+        break;
+      case "price_desc":
+        list.sort((a, b) => b.attributes.price_lkr - a.attributes.price_lkr);
+        break;
+      case "rating":
+        list.sort((a, b) => b.attributes.rating - a.attributes.rating);
+        break;
+    }
+    return list;
+  }, [task, query, sort, maxPrice]);
+
+  async function submit() {
+    if (!selected || !pid || !task) return;
+    setSubmitting(true);
     onHoverEnd(selected);
+
     const t = timing.current;
+
+    // Position of every candidate in the list as it stood at the moment of
+    // choice. Filtered-out hotels get null: they were not shown, and treating
+    // them as rank 0 would silently corrupt any position-bias correction.
+    const positions: Record<string, number> = {};
+    visible.forEach((o, i) => {
+      positions[o.hotel_id] = i + 1;
+    });
+
     const payload = {
       participantId: pid,
-      taskId: tasks[idx].id,
+      taskId: task.id,
       chosenHotelId: selected,
+      positions,
+      interactions: t.interactions,
       timing: {
         decision_ms: Math.round(now() - t.renderedAt),
         time_to_first_interaction_ms:
-          t.firstInteractionAt === null
-            ? null
-            : Math.round(t.firstInteractionAt),
+          t.firstInteractionAt === null ? null : Math.round(t.firstInteractionAt),
         dwell_ms: Object.fromEntries(
           Object.entries(t.dwellMs).map(([k, v]) => [k, Math.round(v)]),
         ),
         revisions: t.revisions,
         task_index: idx,
+        // Final state of the browsing controls, so the choice can be read
+        // against the list the participant had actually narrowed it to.
+        final_sort: sort,
+        final_query: query.trim() || null,
+        final_max_price: maxPrice,
+        n_shown: visible.length,
+        n_total: task.options.length,
         viewport: { w: window.innerWidth, h: window.innerHeight },
         client_ts: new Date().toISOString(),
       },
@@ -133,10 +233,11 @@ export default function StudyClient({ tasks }: Props) {
     }
   }
 
-  if (!pid) return null;
+  if (!pid || !task) return null;
 
-  const task = tasks[idx];
   const pct = Math.round((idx / tasks.length) * 100);
+  const selectedStillVisible =
+    selected !== null && visible.some((o) => o.hotel_id === selected);
 
   return (
     <div className="shell">
@@ -155,24 +256,112 @@ export default function StudyClient({ tasks }: Props) {
         </div>
 
         <div className="scenario">
-          <div className="persona">{task.scenario.persona}</div>
-          <p className="context">{task.scenario.context}</p>
+          <div className="persona">{task.persona}</div>
+          <p className="context">{task.context}</p>
+          <p className="anchor-note">
+            Distances and travel times below are measured to{" "}
+            <strong>{task.anchor.name}</strong>.
+          </p>
         </div>
 
-        <p className="prompt">Select one hotel to continue.</p>
+        <div className="controls">
+          <input
+            type="search"
+            className="search"
+            placeholder="Search by hotel name, area or facility…"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              logInteraction("search", e.target.value);
+            }}
+            aria-label="Search hotels"
+          />
 
-        <div className="options">
-          {task.options.map((o) => (
-            <OptionCard
-              key={o.hotel_id}
-              option={o}
-              selected={selected === o.hotel_id}
-              onChoose={() => choose(o.hotel_id)}
-              onHoverStart={() => onHoverStart(o.hotel_id)}
-              onHoverEnd={() => onHoverEnd(o.hotel_id)}
-            />
-          ))}
+          <select
+            className="control"
+            value={sort}
+            onChange={(e) => {
+              const v = e.target.value as SortKey;
+              setSort(v);
+              logInteraction("sort", v);
+            }}
+            aria-label="Sort hotels"
+          >
+            {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+              <option key={k} value={k}>
+                {SORT_LABELS[k]}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="control"
+            value={maxPrice ?? ""}
+            onChange={(e) => {
+              const v = e.target.value === "" ? null : Number(e.target.value);
+              setMaxPrice(v);
+              logInteraction("price_filter", e.target.value || "any");
+            }}
+            aria-label="Filter by maximum price"
+          >
+            <option value="">Any price</option>
+            {[10000, 20000, 30000, 50000, 80000]
+              .filter((p) => p < priceCeiling)
+              .map((p) => (
+                <option key={p} value={p}>
+                  Up to Rs {p.toLocaleString()}
+                </option>
+              ))}
+          </select>
+
+          {(query || maxPrice !== null || sort !== "distance") && (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                setQuery("");
+                setMaxPrice(null);
+                setSort("distance");
+                logInteraction("reset", "all");
+              }}
+            >
+              Reset
+            </button>
+          )}
         </div>
+
+        <p className="prompt">
+          Showing <strong>{visible.length}</strong> of {task.options.length}{" "}
+          hotels. Select one to continue.
+        </p>
+
+        {visible.length === 0 ? (
+          <p className="empty">
+            No hotels match that search. Try clearing the filters.
+          </p>
+        ) : (
+          <div className="options">
+            {visible.map((o, i) => (
+              <OptionCard
+                key={o.hotel_id}
+                option={o}
+                position={i + 1}
+                anchorName={task.anchor.name}
+                selected={selected === o.hotel_id}
+                onChoose={() => choose(o.hotel_id)}
+                onHoverStart={() => onHoverStart(o.hotel_id)}
+                onHoverEnd={() => onHoverEnd(o.hotel_id)}
+              />
+            ))}
+          </div>
+        )}
+
+        {selected && !selectedStillVisible && (
+          <p className="empty">
+            Your selected hotel is hidden by the current filters. Clear them, or
+            pick one from the list.
+          </p>
+        )}
 
         <div className="sticky-actions">
           <button
@@ -239,12 +428,16 @@ function Thumb({ name, image }: { name: string; image?: string }) {
 
 function OptionCard({
   option,
+  position,
+  anchorName,
   selected,
   onChoose,
   onHoverStart,
   onHoverEnd,
 }: {
   option: DisplayOption;
+  position: number;
+  anchorName: string;
   selected: boolean;
   onChoose: () => void;
   onHoverStart: () => void;
@@ -262,6 +455,10 @@ function OptionCard({
       onFocus={onHoverStart}
       onBlur={onHoverEnd}
     >
+      <span className="option-rank" aria-hidden="true">
+        {position}
+      </span>
+
       <Thumb name={option.name} image={a.image} />
 
       <div className="option-body">
@@ -281,11 +478,12 @@ function OptionCard({
             <span>{a.review_count.toLocaleString()} reviews</span>
           )}
           {a.star > 0 && <span>{a.star}-star</span>}
-          {a.distance_km != null ? (
-            <span>{a.distance_km} km to centre</span>
-          ) : a.travel_time_min != null ? (
-            <span>{a.travel_time_min} min to centre</span>
-          ) : null}
+          <span className="anchor-metric">
+            {option.anchor_distance_km} km to {anchorName}
+          </span>
+          <span className="anchor-metric">
+            {option.anchor_travel_min} min drive
+          </span>
           <span>{a.area}</span>
         </div>
 

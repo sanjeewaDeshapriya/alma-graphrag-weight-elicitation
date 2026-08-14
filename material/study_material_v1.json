@@ -1,8 +1,8 @@
 {
-  "version": "v2-liteapi-20260803",
+  "version": "v3-anchored-20260814",
   "city": "Colombo",
   "source": "liteapi",
-  "generated_at": "2026-08-03T16:59:09.890965Z",
+  "generated_at": "2026-08-14T16:13:23.123067Z",
   "dimensions": [
     "spatial",
     "accessibility",
@@ -10,13 +10,112 @@
     "economic",
     "disruption"
   ],
+  "anchor_dimensions": [
+    "spatial",
+    "accessibility"
+  ],
+  "global_dimensions": [
+    "facility",
+    "economic",
+    "disruption"
+  ],
+  "design": {
+    "n_hotels": 35,
+    "n_tasks": 11,
+    "all_options_shown": true,
+    "max_abs_correlation": 0.904,
+    "component_correlation": {
+      "spatial": {
+        "spatial": 1.0,
+        "accessibility": 0.904,
+        "facility": -0.045,
+        "economic": -0.005,
+        "disruption": -0.038
+      },
+      "accessibility": {
+        "spatial": 0.904,
+        "accessibility": 1.0,
+        "facility": -0.041,
+        "economic": -0.039,
+        "disruption": -0.132
+      },
+      "facility": {
+        "spatial": -0.045,
+        "accessibility": -0.041,
+        "facility": 1.0,
+        "economic": -0.702,
+        "disruption": -0.261
+      },
+      "economic": {
+        "spatial": -0.005,
+        "accessibility": -0.039,
+        "facility": -0.702,
+        "economic": 1.0,
+        "disruption": 0.356
+      },
+      "disruption": {
+        "spatial": -0.038,
+        "accessibility": -0.132,
+        "facility": -0.261,
+        "economic": 0.356,
+        "disruption": 1.0
+      }
+    }
+  },
+  "anchors": {
+    "galle_face": {
+      "name": "Galle Face Green",
+      "lat": 6.9271,
+      "lng": 79.8426
+    },
+    "battaramulla": {
+      "name": "Battaramulla",
+      "lat": 6.8994,
+      "lng": 79.9186
+    },
+    "fort": {
+      "name": "Colombo Fort",
+      "lat": 6.9344,
+      "lng": 79.8428
+    },
+    "bambalapitiya": {
+      "name": "Bambalapitiya",
+      "lat": 6.889,
+      "lng": 79.8564
+    },
+    "nugegoda": {
+      "name": "Nugegoda",
+      "lat": 6.8649,
+      "lng": 79.8997
+    },
+    "mount_lavinia": {
+      "name": "Mount Lavinia",
+      "lat": 6.8389,
+      "lng": 79.8653
+    },
+    "rajagiriya": {
+      "name": "Rajagiriya",
+      "lat": 6.9097,
+      "lng": 79.8944
+    },
+    "kollupitiya": {
+      "name": "Kollupitiya",
+      "lat": 6.9101,
+      "lng": 79.8494
+    },
+    "dehiwala": {
+      "name": "Dehiwala",
+      "lat": 6.8511,
+      "lng": 79.8653
+    }
+  },
   "hotels": {
     "lp102b02": {
       "name": "Marino Beach Colombo",
       "attributes": {
-        "price_lkr": 29976,
+        "price_lkr": 29915,
         "rating": 4.6,
-        "review_count": 13008,
+        "review_count": 13219,
         "star": 5,
         "distance_km": 3.2,
         "amenities": [
@@ -29,22 +128,22 @@
         ],
         "area": "590 Marine Drive",
         "image": "https://static.cupid.travel/hotels/155542490.jpg",
-        "description": "Luxurious Amenities and Services Marino Beach Colombo boasts an array of upscale amenities, including an outdoor swimming pool, fitness centre, and a garden terrace. Gues"
+        "description": "Luxurious Amenities and Services Marino Beach Colombo boasts an array of upscale amenities, including an outdoor swimming pool, fitness centre, and a garden terrace. Gues",
+        "lat": 6.899957,
+        "lng": 79.85149
       },
-      "components": {
-        "spatial": 0.0,
-        "accessibility": 0.3,
+      "components_global": {
         "facility": 0.984,
-        "economic": 0.625,
-        "disruption": 1.0
+        "economic": 0.429,
+        "disruption": 0.688
       }
     },
     "lp6557c6e0": {
       "name": "Granbell Hotel Colombo",
       "attributes": {
-        "price_lkr": 35144,
+        "price_lkr": 37342,
         "rating": 4.6,
-        "review_count": 8645,
+        "review_count": 8716,
         "star": 4,
         "distance_km": 2.3,
         "amenities": [
@@ -57,22 +156,22 @@
         ],
         "area": "282/5",
         "image": "https://static.cupid.travel/hotels/344223041.jpg",
-        "description": "Luxurious Accommodation Granbell Hotel Colombo, located in the heart of Colombo, offers a luxurious stay just steps away from Kollupitiya Beach. The guest rooms are elega"
+        "description": "Luxurious Accommodation Granbell Hotel Colombo, located in the heart of Colombo, offers a luxurious stay just steps away from Kollupitiya Beach. The guest rooms are elega",
+        "lat": 6.910427,
+        "lng": 79.848714
       },
-      "components": {
-        "spatial": 0.125,
-        "accessibility": 0.369,
+      "components_global": {
         "facility": 0.894,
-        "economic": 0.438,
-        "disruption": 0.845
+        "economic": 0.257,
+        "disruption": 0.45
       }
     },
     "lp741c5": {
       "name": "Cinnamon Red Colombo",
       "attributes": {
-        "price_lkr": 34125,
+        "price_lkr": 34056,
         "rating": 4.5,
-        "review_count": 5284,
+        "review_count": 5325,
         "star": 4,
         "distance_km": 1.9,
         "amenities": [
@@ -85,22 +184,22 @@
         ],
         "area": "Colombo 03",
         "image": "https://static.cupid.travel/hotels/563151658.jpg",
-        "description": "Modern Accommodation with Rooftop Pool Cinnamon red Colombo, conveniently situated in Colombo, offers contemporary accommodation with free WiFi access. Guests can relax a"
+        "description": "Modern Accommodation with Rooftop Pool Cinnamon red Colombo, conveniently situated in Colombo, offers contemporary accommodation with free WiFi access. Guests can relax a",
+        "lat": 6.912112,
+        "lng": 79.85294
       },
-      "components": {
-        "spatial": 0.562,
-        "accessibility": 0.656,
+      "components_global": {
         "facility": 0.89,
-        "economic": 0.5,
-        "disruption": 0.583
+        "economic": 0.4,
+        "disruption": 0.325
       }
     },
     "lp9855f": {
       "name": "Fairway Colombo - Sri Lanka's First Hotel With Robot Technology",
       "attributes": {
-        "price_lkr": 28858,
+        "price_lkr": 28994,
         "rating": 4.2,
-        "review_count": 3329,
+        "review_count": 3332,
         "star": 4,
         "distance_km": 2.1,
         "amenities": [
@@ -113,22 +212,22 @@
         ],
         "area": "Colombo 01",
         "image": "https://static.cupid.travel/hotels/199251849.jpg",
-        "description": "Luxurious Accommodation Fairway Colombo offers elegantly designed rooms with air conditioning and flat-screen TVs, providing a comfortable stay for guests. Each room is e"
+        "description": "Luxurious Accommodation Fairway Colombo offers elegantly designed rooms with air conditioning and flat-screen TVs, providing a comfortable stay for guests. Each room is e",
+        "lat": 6.933895,
+        "lng": 79.843896
       },
-      "components": {
-        "spatial": 0.375,
-        "accessibility": 0.506,
+      "components_global": {
         "facility": 0.878,
-        "economic": 0.688,
-        "disruption": 0.695
+        "economic": 0.514,
+        "disruption": 0.575
       }
     },
     "lp655a9e91": {
       "name": "Zest Metropole",
       "attributes": {
-        "price_lkr": 26932,
+        "price_lkr": 21384,
         "rating": 4.3,
-        "review_count": 2722,
+        "review_count": 2725,
         "star": 4,
         "distance_km": 2.0,
         "amenities": [
@@ -141,22 +240,22 @@
         ],
         "area": "43 Hospital Street",
         "image": "https://static.cupid.travel/hotels/376877372.jpg",
-        "description": "Central Location in Colombo Situated in the heart of Colombo, Zest Metropole offers comfortable rooms with city views, just steps away from popular attractions like Galle"
+        "description": "Central Location in Colombo Situated in the heart of Colombo, Zest Metropole offers comfortable rooms with city views, just steps away from popular attractions like Galle",
+        "lat": 6.933964,
+        "lng": 79.844154
       },
-      "components": {
-        "spatial": 0.5,
-        "accessibility": 0.575,
+      "components_global": {
         "facility": 0.882,
-        "economic": 0.75,
-        "disruption": 0.62
+        "economic": 0.743,
+        "disruption": 0.575
       }
     },
     "lp656d3aa9": {
       "name": "Sofia Colombo City Hotel",
       "attributes": {
-        "price_lkr": 23891,
+        "price_lkr": 23843,
         "rating": 4.3,
-        "review_count": 2535,
+        "review_count": 2554,
         "star": 4,
         "distance_km": 2.4,
         "amenities": [
@@ -169,23 +268,23 @@
         ],
         "area": "295a Galle Road",
         "image": "https://static.cupid.travel/hotels/612428359.jpg",
-        "description": "Convenient Location near Beaches Sofia Colombo City Hotel is ideally situated just 200 meters from Kollupitiya Beach and 500 meters from Bambalapitiya Beach, offering gue"
+        "description": "Convenient Location near Beaches Sofia Colombo City Hotel is ideally situated just 200 meters from Kollupitiya Beach and 500 meters from Bambalapitiya Beach, offering gue",
+        "lat": 6.907568,
+        "lng": 79.85093
       },
-      "components": {
-        "spatial": 0.062,
-        "accessibility": 0.25,
+      "components_global": {
         "facility": 0.882,
-        "economic": 0.812,
-        "disruption": 0.883
+        "economic": 0.6,
+        "disruption": 0.45
       }
     },
     "lp803e1": {
       "name": "Galle Face Hotel",
       "attributes": {
-        "price_lkr": 33802,
+        "price_lkr": 34968,
         "rating": 4.5,
-        "review_count": 2451,
-        "star": 4,
+        "review_count": 2539,
+        "star": 5,
         "distance_km": 1.8,
         "amenities": [
           "Pool",
@@ -197,50 +296,22 @@
         ],
         "area": "2",
         "image": "https://static.cupid.travel/hotels/102283740.jpg",
-        "description": "Historic Charm and Modern Luxury Ocean Views and Comfortable Amenities The rooms at Galle Face Hotel offer stunning views of the Indian Ocean, Galle Face Green, or Colomb"
+        "description": "Historic Charm and Modern Luxury Ocean Views and Comfortable Amenities The rooms at Galle Face Hotel offer stunning views of the Indian Ocean, Galle Face Green, or Colomb",
+        "lat": 6.920612,
+        "lng": 79.846085
       },
-      "components": {
-        "spatial": 0.75,
-        "accessibility": 0.712,
-        "facility": 0.89,
-        "economic": 0.562,
-        "disruption": 0.47
-      }
-    },
-    "lp1c1ea": {
-      "name": "Cinnamon Grand Colombo",
-      "attributes": {
-        "price_lkr": 55024,
-        "rating": 4.7,
-        "review_count": 2279,
-        "star": 5,
-        "distance_km": 1.8,
-        "amenities": [
-          "Pool",
-          "Free WiFi",
-          "WiFi",
-          "Gym",
-          "Restaurant",
-          "Bar"
-        ],
-        "area": "77 Galle Road",
-        "image": "https://static.cupid.travel/hotels/543025919.jpg",
-        "description": "Luxurious 5-Star City Hotel in the Heart of Colombo Award-Winning Spa and Multiple Dining Options Indulge in relaxation at the award-winning spa or savor a culinary journ"
-      },
-      "components": {
-        "spatial": 0.75,
-        "accessibility": 0.694,
-        "facility": 0.988,
-        "economic": 0.062,
-        "disruption": 0.55
+      "components_global": {
+        "facility": 0.98,
+        "economic": 0.343,
+        "disruption": 0.375
       }
     },
     "lpb1537": {
       "name": "Shangri-La Colombo",
       "attributes": {
-        "price_lkr": 69435,
+        "price_lkr": 66902,
         "rating": 4.7,
-        "review_count": 2131,
+        "review_count": 2186,
         "star": 5,
         "distance_km": 1.9,
         "amenities": [
@@ -253,22 +324,22 @@
         ],
         "area": "Colombo 02",
         "image": "https://static.cupid.travel/hotels/295690735.jpg",
-        "description": "Luxurious Accommodations with Stunning Views Shangri-La Colombo offers a luxurious stay in the heart of the city, with guestrooms featuring breathtaking views of the Indi"
+        "description": "Luxurious Accommodations with Stunning Views Shangri-La Colombo offers a luxurious stay in the heart of the city, with guestrooms featuring breathtaking views of the Indi",
+        "lat": 6.928763,
+        "lng": 79.844
       },
-      "components": {
-        "spatial": 0.562,
-        "accessibility": 0.544,
+      "components_global": {
         "facility": 0.988,
-        "economic": 0.0,
-        "disruption": 0.663
+        "economic": 0.029,
+        "disruption": 0.375
       }
     },
     "lp3e58e": {
       "name": "The Kingsbury Colombo",
       "attributes": {
-        "price_lkr": 39666,
+        "price_lkr": 37277,
         "rating": 4.2,
-        "review_count": 2049,
+        "review_count": 2063,
         "star": 5,
         "distance_km": 2.2,
         "amenities": [
@@ -281,22 +352,22 @@
         ],
         "area": "No 48 Janadhipathi Mawatha",
         "image": "https://static.cupid.travel/hotels/559618093.jpg",
-        "description": "Spectacular Views and Regal Accommodation Experience luxury at its finest with breathtaking views of the Colombo Harbor and Galle Face Green from elegantly-designed rooms"
+        "description": "Spectacular Views and Regal Accommodation Experience luxury at its finest with breathtaking views of the Colombo Harbor and Galle Face Green from elegantly-designed rooms",
+        "lat": 6.932767,
+        "lng": 79.842123
       },
-      "components": {
-        "spatial": 0.188,
-        "accessibility": 0.262,
+      "components_global": {
         "facility": 0.968,
-        "economic": 0.25,
-        "disruption": 0.887
+        "economic": 0.286,
+        "disruption": 0.625
       }
     },
     "lp30277": {
       "name": "Hilton Colombo Residence",
       "attributes": {
-        "price_lkr": 52845,
+        "price_lkr": 48881,
         "rating": 4.4,
-        "review_count": 1829,
+        "review_count": 1833,
         "star": 5,
         "distance_km": 0.9,
         "amenities": [
@@ -309,22 +380,78 @@
         ],
         "area": "200 Union Place",
         "image": "https://static.cupid.travel/hotels/483815281.jpg",
-        "description": "Luxurious Suites with Panoramic Views Experience breathtaking views of Colombo city, the harbour, or the Indian Ocean from our spacious rooms and suites at Hilton Colombo"
+        "description": "Luxurious Suites with Panoramic Views Experience breathtaking views of Colombo city, the harbour, or the Indian Ocean from our spacious rooms and suites at Hilton Colombo",
+        "lat": 6.920345,
+        "lng": 79.856151
       },
-      "components": {
-        "spatial": 0.938,
-        "accessibility": 0.769,
+      "components_global": {
         "facility": 0.976,
-        "economic": 0.125,
-        "disruption": 0.438
+        "economic": 0.143,
+        "disruption": 0.5
+      }
+    },
+    "lp67708": {
+      "name": "Supun Arcade Residency",
+      "attributes": {
+        "price_lkr": 18291,
+        "rating": 3.8,
+        "review_count": 1702,
+        "star": 4,
+        "distance_km": 5.7,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Room service"
+        ],
+        "area": "56",
+        "image": "https://static.cupid.travel/hotels/460696185.jpg",
+        "description": "Luxurious Apartments with Private Balconies Rooftop Swimming Pool with Sea Views Enjoy a refreshing dip in our rooftop pool while taking in breathtaking views of the sea.",
+        "lat": 6.876169,
+        "lng": 79.860654
+      },
+      "components_global": {
+        "facility": 0.862,
+        "economic": 0.829,
+        "disruption": 0.762
+      }
+    },
+    "lp7c172": {
+      "name": "Mirage Colombo",
+      "attributes": {
+        "price_lkr": 20655,
+        "rating": 3.8,
+        "review_count": 1636,
+        "star": 4,
+        "distance_km": 6.3,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "COLOMBO 06",
+        "image": "https://static.cupid.travel/hotels/166436779.jpg",
+        "description": "Luxurious Accommodation with Stunning Views Experience elegant accommodation at Mirage Hotel Colombo, where every room features a private balcony and captivating sea view",
+        "lat": 6.870689,
+        "lng": 79.858586
+      },
+      "components_global": {
+        "facility": 0.862,
+        "economic": 0.8,
+        "disruption": 0.825
       }
     },
     "lp33ddb": {
       "name": "Taj Samudra, Colombo",
       "attributes": {
-        "price_lkr": 36617,
+        "price_lkr": 50097,
         "rating": 4.5,
-        "review_count": 1492,
+        "review_count": 1520,
         "star": 5,
         "distance_km": 1.7,
         "amenities": [
@@ -337,22 +464,50 @@
         ],
         "area": "25",
         "image": "https://static.cupid.travel/hotels/32900441.jpg",
-        "description": "Stunning Views and Luxurious Amenities Ocean Views and City Skyline : Enjoy breathtaking views of the Indian Ocean or the city skyline from the comfort of your room at Ta"
+        "description": "Stunning Views and Luxurious Amenities Ocean Views and City Skyline : Enjoy breathtaking views of the Indian Ocean or the city skyline from the comfort of your room at Ta",
+        "lat": 6.922566,
+        "lng": 79.846728
       },
-      "components": {
-        "spatial": 0.875,
-        "accessibility": 0.706,
+      "components_global": {
         "facility": 0.98,
-        "economic": 0.375,
-        "disruption": 0.475
+        "economic": 0.114,
+        "disruption": 0.5
+      }
+    },
+    "lpa0a8a": {
+      "name": "NH Collection Colombo",
+      "attributes": {
+        "price_lkr": 45222,
+        "rating": 4.6,
+        "review_count": 1500,
+        "star": 5,
+        "distance_km": 2.0,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "No. 24",
+        "image": "https://static.cupid.travel/hotels/569328060.jpg",
+        "description": "Luxurious Accommodations Experience luxury at its finest in Movenpick Hotel Colombo, offering air-conditioned rooms with stunning views, plush amenities, and floor-to-cei",
+        "lat": 6.911961,
+        "lng": 79.850975
+      },
+      "components_global": {
+        "facility": 0.984,
+        "economic": 0.171,
+        "disruption": 0.312
       }
     },
     "lp1bc0d": {
       "name": "Hilton Colombo Hotel",
       "attributes": {
-        "price_lkr": 44798,
+        "price_lkr": 44962,
         "rating": 4.2,
-        "review_count": 1418,
+        "review_count": 1425,
         "star": 5,
         "distance_km": 1.9,
         "amenities": [
@@ -365,22 +520,134 @@
         ],
         "area": "Colombo 02",
         "image": "https://static.cupid.travel/hotels/521337940.jpg",
-        "description": "Luxurious Accommodation with Stunning Views Overlooking the Indian Ocean and Beira Lake, Hilton Colombo Hotel offers spacious rooms with over-sized windows, marble bathro"
+        "description": "Luxurious Accommodation with Stunning Views Overlooking the Indian Ocean and Beira Lake, Hilton Colombo Hotel offers spacious rooms with over-sized windows, marble bathro",
+        "lat": 6.932591,
+        "lng": 79.845071
       },
-      "components": {
-        "spatial": 0.562,
-        "accessibility": 0.469,
+      "components_global": {
         "facility": 0.968,
-        "economic": 0.188,
-        "disruption": 0.663
+        "economic": 0.2,
+        "disruption": 0.562
+      }
+    },
+    "lp71118": {
+      "name": "CityRest Fort",
+      "attributes": {
+        "price_lkr": 12809,
+        "rating": 3.5,
+        "review_count": 1291,
+        "star": 3,
+        "distance_km": 2.0,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Parking",
+          "Airport shuttle",
+          "Family rooms",
+          "Non-smoking"
+        ],
+        "area": "46 Hospital Street",
+        "image": "https://static.cupid.travel/hotels/622299632.jpg",
+        "description": "Central Location CityRest Fort, a hostel situated in the heart of Colombo, offers various room options from dormitories to private rooms. Enjoy the convenience of free Wi",
+        "lat": 6.933757,
+        "lng": 79.844274
+      },
+      "components_global": {
+        "facility": 0.76,
+        "economic": 0.971,
+        "disruption": 0.525
+      }
+    },
+    "lp96bf6": {
+      "name": "Jetwing Colombo Seven",
+      "attributes": {
+        "price_lkr": 34399,
+        "rating": 0.0,
+        "review_count": 1204,
+        "star": 5,
+        "distance_km": 1.6,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "Colombo 07",
+        "image": "https://static.cupid.travel/hotels/236552903.jpg",
+        "description": "Luxurious Rooftop Pool and Spa Center - Enjoy a year-round rooftop pool and unwind at the spa center at Jetwing Colombo Seven. Relax and rejuvenate in style. Modern Ameni",
+        "lat": 6.916331,
+        "lng": 79.870285
+      },
+      "components_global": {
+        "facility": 0.8,
+        "economic": 0.371,
+        "disruption": 0.812
+      }
+    },
+    "lp43673": {
+      "name": "Pegasus Reef - A Beach Resort in Colombo",
+      "attributes": {
+        "price_lkr": 29473,
+        "rating": 4.0,
+        "review_count": 1146,
+        "star": 4,
+        "distance_km": 8.1,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "Hendala",
+        "image": "https://static.cupid.travel/hotels/610520126.jpg",
+        "description": "Luxurious Accommodation with Stunning Views The Pegasus Reef Hotel, located just a 10-minute drive from Colombo’s city centre and a stone's throw away from Helakanda Beac",
+        "lat": 6.999766,
+        "lng": 79.869407
+      },
+      "components_global": {
+        "facility": 0.87,
+        "economic": 0.486,
+        "disruption": 0.95
+      }
+    },
+    "lpc0df6": {
+      "name": "Fern Colombo",
+      "attributes": {
+        "price_lkr": 16313,
+        "rating": 4.0,
+        "review_count": 1033,
+        "star": 3,
+        "distance_km": 1.8,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Room service",
+          "Free parking",
+          "Parking"
+        ],
+        "area": "78 Rosmead Place",
+        "image": "https://static.cupid.travel/hotels/137012913.jpg",
+        "description": "Convenient Location Located in Colombo District, Fern Colombo is just a stone's throw away from Asiri Surgical Hospital, U.S. Embassy, and other popular attractions. Comf",
+        "lat": 6.914455,
+        "lng": 79.870803
+      },
+      "components_global": {
+        "facility": 0.693,
+        "economic": 0.857,
+        "disruption": 0.713
       }
     },
     "lp6574b103": {
       "name": "Amari Colombo, Sri Lanka",
       "attributes": {
-        "price_lkr": 38674,
+        "price_lkr": 54825,
         "rating": 4.5,
-        "review_count": 963,
+        "review_count": 971,
         "star": 5,
         "distance_km": 2.2,
         "amenities": [
@@ -393,22 +660,22 @@
         ],
         "area": "254 Galle Road",
         "image": "https://static.cupid.travel/hotels/599799251.jpg",
-        "description": "Luxurious Accommodation - The rooms at Amari Colombo, Sri Lanka are elegantly designed and equipped with modern amenities for a comfortable stay. Dining Experience - Indu"
+        "description": "Luxurious Accommodation - The rooms at Amari Colombo, Sri Lanka are elegantly designed and equipped with modern amenities for a comfortable stay. Dining Experience - Indu",
+        "lat": 6.911404,
+        "lng": 79.849339
       },
-      "components": {
-        "spatial": 0.188,
-        "accessibility": 0.187,
+      "components_global": {
         "facility": 0.98,
-        "economic": 0.312,
-        "disruption": 0.887
+        "economic": 0.086,
+        "disruption": 0.375
       }
     },
     "lp81760": {
       "name": "The Steuart by Citrus",
       "attributes": {
-        "price_lkr": 19630,
+        "price_lkr": 23523,
         "rating": 4.2,
-        "review_count": 875,
+        "review_count": 900,
         "star": 4,
         "distance_km": 2.2,
         "amenities": [
@@ -421,22 +688,78 @@
         ],
         "area": "Colombo 01",
         "image": "https://static.cupid.travel/hotels/113078166.jpg",
-        "description": "Prime Location in Colombo's CBD: Strategically situated in the bustling central business district, The Steuart by Citrus offers convenient access to key attractions and b"
+        "description": "Prime Location in Colombo's CBD: Strategically situated in the bustling central business district, The Steuart by Citrus offers convenient access to key attractions and b",
+        "lat": 6.933235,
+        "lng": 79.84226
       },
-      "components": {
-        "spatial": 0.188,
-        "accessibility": 0.169,
+      "components_global": {
         "facility": 0.878,
-        "economic": 0.875,
-        "disruption": 0.808
+        "economic": 0.629,
+        "disruption": 0.575
+      }
+    },
+    "lp6583218e": {
+      "name": "Ramada Colombo",
+      "attributes": {
+        "price_lkr": 28947,
+        "rating": 3.9,
+        "review_count": 808,
+        "star": 5,
+        "distance_km": 1.6,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "30 Sir Mohamed Macan Makar M",
+        "image": "https://static.cupid.travel/hotels/180954416.jpg",
+        "description": "Luxurious Accommodation Ramada Colombo, ideally situated in the heart of the vibrant capital city of Sri Lanka, boasts a convenient location just a stone's throw away fro",
+        "lat": 6.921315,
+        "lng": 79.847748
+      },
+      "components_global": {
+        "facility": 0.956,
+        "economic": 0.543,
+        "disruption": 0.375
+      }
+    },
+    "lp67286": {
+      "name": "Colombo Court Hotel & Spa",
+      "attributes": {
+        "price_lkr": 29698,
+        "rating": 4.5,
+        "review_count": 710,
+        "star": 4,
+        "distance_km": 3.3,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "Colombo 3",
+        "image": "https://static.cupid.travel/hotels/248758550.jpg",
+        "description": "Luxurious Accommodation Indulge in the modern and stylish rooms at Colombo Court Hotel & Spa, complete with amenities like a minibar and personal safe. Culinary Delights ",
+        "lat": 6.898114,
+        "lng": 79.856409
+      },
+      "components_global": {
+        "facility": 0.89,
+        "economic": 0.457,
+        "disruption": 0.762
       }
     },
     "lpc08f9": {
       "name": "Morven Hotel Colombo",
       "attributes": {
-        "price_lkr": 19299,
+        "price_lkr": 21254,
         "rating": 4.5,
-        "review_count": 621,
+        "review_count": 677,
         "star": 4,
         "distance_km": 2.1,
         "amenities": [
@@ -449,127 +772,2740 @@
         ],
         "area": "No. 213",
         "image": "https://static.cupid.travel/hotels/199611049.jpg",
-        "description": "Luxurious Accommodation Morven Hotel Colombo, located in Colombo, offers a luxurious stay just 600 meters from the U.S. Embassy. The hotel boasts an outdoor swimming pool"
+        "description": "Luxurious Accommodation Morven Hotel Colombo, located in Colombo, offers a luxurious stay just 600 meters from the U.S. Embassy. The hotel boasts an outdoor swimming pool",
+        "lat": 6.912494,
+        "lng": 79.849491
       },
-      "components": {
-        "spatial": 0.375,
-        "accessibility": 0.281,
+      "components_global": {
         "facility": 0.89,
-        "economic": 0.938,
-        "disruption": 0.695
+        "economic": 0.771,
+        "disruption": 0.2
+      }
+    },
+    "lp73ace": {
+      "name": "The Ocean Colombo - Guaranteed Sea View Rooms",
+      "attributes": {
+        "price_lkr": 21427,
+        "rating": 3.9,
+        "review_count": 635,
+        "star": 4,
+        "distance_km": 4.7,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Bar",
+          "Room service",
+          "Free parking"
+        ],
+        "area": "Colombo 4",
+        "image": "https://static.cupid.travel/hotels/116578476.jpg",
+        "description": "Spectacular Ocean Views: Enjoy breathtaking ocean views from every guest room at The Ocean Colombo, providing a serene backdrop to your stay along Marine Drive. Modern Am",
+        "lat": 6.885184,
+        "lng": 79.855269
+      },
+      "components_global": {
+        "facility": 0.866,
+        "economic": 0.714,
+        "disruption": 0.825
+      }
+    },
+    "lp857b8": {
+      "name": "Zylan Colombo",
+      "attributes": {
+        "price_lkr": 22613,
+        "rating": 4.5,
+        "review_count": 609,
+        "star": 4,
+        "distance_km": 2.0,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Bar",
+          "Room service"
+        ],
+        "area": "No: 115 Rosmead Place",
+        "image": "https://static.cupid.travel/hotels/106995888.jpg",
+        "description": "Luxurious Accommodation Experience modern rooms equipped with a DVD player, flat-screen TV, minibar, and personal safe at Zylan Colombo. Enjoy the convenience of tea/coff",
+        "lat": 6.913934,
+        "lng": 79.874167
+      },
+      "components_global": {
+        "facility": 0.89,
+        "economic": 0.657,
+        "disruption": 0.762
+      }
+    },
+    "lp72a36": {
+      "name": "Best Western Elyon Colombo",
+      "attributes": {
+        "price_lkr": 21971,
+        "rating": 4.2,
+        "review_count": 464,
+        "star": 4,
+        "distance_km": 5.1,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar",
+          "Room service"
+        ],
+        "area": "102 A",
+        "image": "https://static.cupid.travel/hotels/514679504.jpg",
+        "description": "Rooftop Bar and Lounge for City Views Best Western Elyon Colombo boasts a stunning rooftop bar and lounge offering panoramic city views, perfect for unwinding after a day",
+        "lat": 6.883608,
+        "lng": 79.876307
+      },
+      "components_global": {
+        "facility": 0.878,
+        "economic": 0.686,
+        "disruption": 0.887
+      }
+    },
+    "lp800a1": {
+      "name": "Nyne Hotels Lake Lodge - Colombo",
+      "attributes": {
+        "price_lkr": 39588,
+        "rating": 4.6,
+        "review_count": 422,
+        "star": 4,
+        "distance_km": 1.5,
+        "amenities": [
+          "Free WiFi",
+          "WiFi",
+          "Restaurant",
+          "Bar",
+          "Free parking",
+          "Parking"
+        ],
+        "area": "Colombo 3",
+        "image": "https://static.cupid.travel/hotels/395835260.jpg",
+        "description": "Tranquil Oasis in Colombo Serene Garden Views : Lake Lodge, located just 700 meters from the U.S. Embassy, offers a peaceful retreat with garden views from the terrace. C",
+        "lat": 6.915044,
+        "lng": 79.854357
+      },
+      "components_global": {
+        "facility": 0.894,
+        "economic": 0.229,
+        "disruption": 0.2
+      }
+    },
+    "lp656d40c7": {
+      "name": "Sheraton Colombo Hotel",
+      "attributes": {
+        "price_lkr": 56767,
+        "rating": 4.7,
+        "review_count": 389,
+        "star": 5,
+        "distance_km": 2.2,
+        "amenities": [
+          "Pool",
+          "Rooftop pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant"
+        ],
+        "area": "265 Galle Road",
+        "image": "https://static.cupid.travel/hotels/544295993.jpg",
+        "description": "Luxurious 5-Star Experience Outdoor Swimming Pool and Fitness Centre : Relax and unwind by the outdoor swimming pool or stay active at the fitness centre. Gourmet Dining ",
+        "lat": 6.910216,
+        "lng": 79.85022
+      },
+      "components_global": {
+        "facility": 0.988,
+        "economic": 0.057,
+        "disruption": 0.5
+      }
+    },
+    "lp3ca7d": {
+      "name": "Ramada by Wyndham Colombo",
+      "attributes": {
+        "price_lkr": 25927,
+        "rating": 0.0,
+        "review_count": 315,
+        "star": 4,
+        "distance_km": 1.6,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "Gym"
+        ],
+        "area": "30 Sir Mohamed Macan Markar ",
+        "image": "https://static.cupid.travel/hotels/ex_90f142b8_z.jpg",
+        "description": "Luxurious Spa and Recreational Amenities Indulge in facials at the spa and enjoy the health club, outdoor pool, and spa tub for relaxation. Fine Dining and Culinary Delig",
+        "lat": 6.92145,
+        "lng": 79.847626
+      },
+      "components_global": {
+        "facility": 0.71,
+        "economic": 0.571,
+        "disruption": 0.325
+      }
+    },
+    "lp40d3f": {
+      "name": "Global Towers Hotel & Apartments",
+      "attributes": {
+        "price_lkr": 16163,
+        "rating": 3.5,
+        "review_count": 243,
+        "star": 4,
+        "distance_km": 5.6,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "11 Marine Drive",
+        "image": "https://static.cupid.travel/hotels/72189574.jpg",
+        "description": "Beachfront Luxury at Global Towers Luxurious Accommodation : Global Towers offers spacious apartments with private balconies and elegant bathrooms, including a washing ma",
+        "lat": 6.877341,
+        "lng": 79.857095
+      },
+      "components_global": {
+        "facility": 0.85,
+        "economic": 0.886,
+        "disruption": 0.762
+      }
+    },
+    "lp5f0e5": {
+      "name": "Paradise Road Tintagel Colombo",
+      "attributes": {
+        "price_lkr": 75476,
+        "rating": 4.5,
+        "review_count": 226,
+        "star": 5,
+        "distance_km": 1.7,
+        "amenities": [
+          "Pool",
+          "Free WiFi",
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Bar"
+        ],
+        "area": "65 Rosmead Place",
+        "image": "https://static.cupid.travel/hotels/233756574.jpg",
+        "description": "Luxurious Boutique Suites Formerly a colonial residence, Paradise Road Tintagel Colombo offers boutique-style suites with lavish interiors and Egyptian cotton linen. Enjo",
+        "lat": 6.914868,
+        "lng": 79.869924
+      },
+      "components_global": {
+        "facility": 0.98,
+        "economic": 0.0,
+        "disruption": 0.812
+      }
+    },
+    "lp6e625": {
+      "name": "Hotel Janaki",
+      "attributes": {
+        "price_lkr": 15600,
+        "rating": 4.0,
+        "review_count": 127,
+        "star": 3,
+        "distance_km": 4.2,
+        "amenities": [
+          "Pool",
+          "Restaurant",
+          "Bar",
+          "Room service",
+          "Free parking",
+          "Parking"
+        ],
+        "area": "Colombo 5",
+        "image": "https://static.cupid.travel/hotels/150035867.jpg",
+        "description": "Convenient Location near Colombo Beach Modern Accommodation with Outdoor Pool Variety of Dining Options Available Book your stay at Hotel Janaki now and enjoy a relaxing ",
+        "lat": 6.89061,
+        "lng": 79.869704
+      },
+      "components_global": {
+        "facility": 0.78,
+        "economic": 0.914,
+        "disruption": 0.838
+      }
+    },
+    "lp65589ffb": {
+      "name": "MaRadha Colombo",
+      "attributes": {
+        "price_lkr": 35600,
+        "rating": 4.8,
+        "review_count": 85,
+        "star": 3,
+        "distance_km": 3.6,
+        "amenities": [
+          "Free WiFi"
+        ],
+        "area": "31",
+        "image": "https://static.cupid.travel/hotels/ex_3797206e_z.jpg",
+        "description": "Luxurious Spa Services Indulge in massages, body treatments, and facials at the full-service spa for ultimate relaxation. Gourmet Dining and Drinks Savor delectable meals",
+        "lat": 6.895755,
+        "lng": 79.852672
+      },
+      "components_global": {
+        "facility": 0.812,
+        "economic": 0.314,
+        "disruption": 0.713
+      }
+    },
+    "lp6f007": {
+      "name": "Clock Inn Colombo",
+      "attributes": {
+        "price_lkr": 13874,
+        "rating": 3.8,
+        "review_count": 52,
+        "star": 2,
+        "distance_km": 3.4,
+        "amenities": [
+          "Free WiFi",
+          "AC"
+        ],
+        "area": "Colombo 03",
+        "image": "https://static.cupid.travel/hotels/ex_5d7acf7f_z.jpg",
+        "description": "Experience comfort and convenience in the heart of Colombo at Clock Inn Colombo, where every stay is a blend of relaxation and local charm. Elegant Accommodations Enjoy o",
+        "lat": 6.897317,
+        "lng": 79.854333
+      },
+      "components_global": {
+        "facility": 0.525,
+        "economic": 0.943,
+        "disruption": 0.662
       }
     }
   },
-  "scenarios": [
-    {
-      "id": "budget_backpacker",
-      "persona": "Budget backpacker",
-      "primary_dimension": "economic",
-      "context": "You are a solo backpacker travelling on a tight budget. You mainly need a cheap, safe place to sleep and don't mind basic facilities or being a short ride from the centre. Which hotel would you book?"
+  "anchor_components": {
+    "galle_face": {
+      "lp102b02": {
+        "spatial": 0.4,
+        "accessibility": 0.343,
+        "distance_km": 3.2,
+        "travel_min": 9
+      },
+      "lp6557c6e0": {
+        "spatial": 0.514,
+        "accessibility": 0.571,
+        "distance_km": 2.0,
+        "travel_min": 5
+      },
+      "lp741c5": {
+        "spatial": 0.486,
+        "accessibility": 0.486,
+        "distance_km": 2.0,
+        "travel_min": 6
+      },
+      "lp9855f": {
+        "spatial": 0.8,
+        "accessibility": 0.686,
+        "distance_km": 0.8,
+        "travel_min": 4
+      },
+      "lp655a9e91": {
+        "spatial": 0.771,
+        "accessibility": 0.743,
+        "distance_km": 0.8,
+        "travel_min": 4
+      },
+      "lp656d3aa9": {
+        "spatial": 0.429,
+        "accessibility": 0.543,
+        "distance_km": 2.4,
+        "travel_min": 5
+      },
+      "lp803e1": {
+        "spatial": 0.743,
+        "accessibility": 0.857,
+        "distance_km": 0.8,
+        "travel_min": 3
+      },
+      "lpb1537": {
+        "spatial": 0.971,
+        "accessibility": 0.971,
+        "distance_km": 0.2,
+        "travel_min": 1
+      },
+      "lp3e58e": {
+        "spatial": 0.943,
+        "accessibility": 0.914,
+        "distance_km": 0.6,
+        "travel_min": 2
+      },
+      "lp30277": {
+        "spatial": 0.657,
+        "accessibility": 0.457,
+        "distance_km": 1.7,
+        "travel_min": 6
+      },
+      "lp67708": {
+        "spatial": 0.086,
+        "accessibility": 0.114,
+        "distance_km": 6.0,
+        "travel_min": 13
+      },
+      "lp7c172": {
+        "spatial": 0.029,
+        "accessibility": 0.057,
+        "distance_km": 6.5,
+        "travel_min": 16
+      },
+      "lp33ddb": {
+        "spatial": 0.886,
+        "accessibility": 0.771,
+        "distance_km": 0.7,
+        "travel_min": 4
+      },
+      "lpa0a8a": {
+        "spatial": 0.543,
+        "accessibility": 0.514,
+        "distance_km": 1.9,
+        "travel_min": 6
+      },
+      "lp1bc0d": {
+        "spatial": 0.914,
+        "accessibility": 0.6,
+        "distance_km": 0.7,
+        "travel_min": 5
+      },
+      "lp71118": {
+        "spatial": 0.829,
+        "accessibility": 0.8,
+        "distance_km": 0.8,
+        "travel_min": 4
+      },
+      "lp96bf6": {
+        "spatial": 0.371,
+        "accessibility": 0.2,
+        "distance_km": 3.3,
+        "travel_min": 11
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 8.6,
+        "travel_min": 27
+      },
+      "lpc0df6": {
+        "spatial": 0.314,
+        "accessibility": 0.229,
+        "distance_km": 3.4,
+        "travel_min": 11
+      },
+      "lp6574b103": {
+        "spatial": 0.571,
+        "accessibility": 0.657,
+        "distance_km": 1.9,
+        "travel_min": 4
+      },
+      "lp81760": {
+        "spatial": 0.857,
+        "accessibility": 0.943,
+        "distance_km": 0.7,
+        "travel_min": 2
+      },
+      "lp6583218e": {
+        "spatial": 0.686,
+        "accessibility": 0.829,
+        "distance_km": 0.9,
+        "travel_min": 3
+      },
+      "lp67286": {
+        "spatial": 0.257,
+        "accessibility": 0.314,
+        "distance_km": 3.6,
+        "travel_min": 9
+      },
+      "lpc08f9": {
+        "spatial": 0.629,
+        "accessibility": 0.714,
+        "distance_km": 1.8,
+        "travel_min": 4
+      },
+      "lp73ace": {
+        "spatial": 0.171,
+        "accessibility": 0.286,
+        "distance_km": 4.9,
+        "travel_min": 10
+      },
+      "lp857b8": {
+        "spatial": 0.2,
+        "accessibility": 0.171,
+        "distance_km": 3.8,
+        "travel_min": 12
+      },
+      "lp72a36": {
+        "spatial": 0.057,
+        "accessibility": 0.029,
+        "distance_km": 6.1,
+        "travel_min": 18
+      },
+      "lp800a1": {
+        "spatial": 0.6,
+        "accessibility": 0.429,
+        "distance_km": 1.9,
+        "travel_min": 7
+      },
+      "lp656d40c7": {
+        "spatial": 0.457,
+        "accessibility": 0.629,
+        "distance_km": 2.1,
+        "travel_min": 4
+      },
+      "lp3ca7d": {
+        "spatial": 0.714,
+        "accessibility": 0.886,
+        "distance_km": 0.8,
+        "travel_min": 2
+      },
+      "lp40d3f": {
+        "spatial": 0.114,
+        "accessibility": 0.143,
+        "distance_km": 5.8,
+        "travel_min": 12
+      },
+      "lp5f0e5": {
+        "spatial": 0.343,
+        "accessibility": 0.257,
+        "distance_km": 3.3,
+        "travel_min": 11
+      },
+      "lp6e625": {
+        "spatial": 0.143,
+        "accessibility": 0.086,
+        "distance_km": 5.0,
+        "travel_min": 14
+      },
+      "lp65589ffb": {
+        "spatial": 0.229,
+        "accessibility": 0.371,
+        "distance_km": 3.7,
+        "travel_min": 9
+      },
+      "lp6f007": {
+        "spatial": 0.286,
+        "accessibility": 0.4,
+        "distance_km": 3.6,
+        "travel_min": 8
+      }
     },
-    {
-      "id": "business_accessibility",
-      "persona": "Business traveller",
-      "primary_dimension": "accessibility",
-      "context": "You are in Colombo for two days of back-to-back meetings in the Fort business district. You want to reach your meetings quickly with the shortest, most reliable travel. Which hotel would you book?"
+    "battaramulla": {
+      "lp102b02": {
+        "spatial": 0.514,
+        "accessibility": 0.486,
+        "distance_km": 7.4,
+        "travel_min": 22
+      },
+      "lp6557c6e0": {
+        "spatial": 0.343,
+        "accessibility": 0.571,
+        "distance_km": 7.8,
+        "travel_min": 21
+      },
+      "lp741c5": {
+        "spatial": 0.543,
+        "accessibility": 0.714,
+        "distance_km": 7.4,
+        "travel_min": 20
+      },
+      "lp9855f": {
+        "spatial": 0.086,
+        "accessibility": 0.171,
+        "distance_km": 9.1,
+        "travel_min": 24
+      },
+      "lp655a9e91": {
+        "spatial": 0.114,
+        "accessibility": 0.229,
+        "distance_km": 9.1,
+        "travel_min": 24
+      },
+      "lp656d3aa9": {
+        "spatial": 0.486,
+        "accessibility": 0.514,
+        "distance_km": 7.5,
+        "travel_min": 21
+      },
+      "lp803e1": {
+        "spatial": 0.229,
+        "accessibility": 0.343,
+        "distance_km": 8.3,
+        "travel_min": 23
+      },
+      "lpb1537": {
+        "spatial": 0.2,
+        "accessibility": 0.286,
+        "distance_km": 8.9,
+        "travel_min": 24
+      },
+      "lp3e58e": {
+        "spatial": 0.057,
+        "accessibility": 0.057,
+        "distance_km": 9.2,
+        "travel_min": 25
+      },
+      "lp30277": {
+        "spatial": 0.657,
+        "accessibility": 0.8,
+        "distance_km": 7.3,
+        "travel_min": 20
+      },
+      "lp67708": {
+        "spatial": 0.771,
+        "accessibility": 0.2,
+        "distance_km": 6.9,
+        "travel_min": 24
+      },
+      "lp7c172": {
+        "spatial": 0.571,
+        "accessibility": 0.029,
+        "distance_km": 7.4,
+        "travel_min": 25
+      },
+      "lp33ddb": {
+        "spatial": 0.257,
+        "accessibility": 0.314,
+        "distance_km": 8.3,
+        "travel_min": 24
+      },
+      "lpa0a8a": {
+        "spatial": 0.457,
+        "accessibility": 0.743,
+        "distance_km": 7.6,
+        "travel_min": 20
+      },
+      "lp1bc0d": {
+        "spatial": 0.171,
+        "accessibility": 0.086,
+        "distance_km": 8.9,
+        "travel_min": 25
+      },
+      "lp71118": {
+        "spatial": 0.143,
+        "accessibility": 0.257,
+        "distance_km": 9.1,
+        "travel_min": 24
+      },
+      "lp96bf6": {
+        "spatial": 0.829,
+        "accessibility": 0.914,
+        "distance_km": 5.7,
+        "travel_min": 14
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 12.4,
+        "travel_min": 38
+      },
+      "lpc0df6": {
+        "spatial": 0.886,
+        "accessibility": 0.943,
+        "distance_km": 5.5,
+        "travel_min": 14
+      },
+      "lp6574b103": {
+        "spatial": 0.4,
+        "accessibility": 0.686,
+        "distance_km": 7.8,
+        "travel_min": 20
+      },
+      "lp81760": {
+        "spatial": 0.029,
+        "accessibility": 0.114,
+        "distance_km": 9.2,
+        "travel_min": 25
+      },
+      "lp6583218e": {
+        "spatial": 0.314,
+        "accessibility": 0.371,
+        "distance_km": 8.2,
+        "travel_min": 23
+      },
+      "lp67286": {
+        "spatial": 0.8,
+        "accessibility": 0.771,
+        "distance_km": 6.9,
+        "travel_min": 20
+      },
+      "lpc08f9": {
+        "spatial": 0.371,
+        "accessibility": 0.543,
+        "distance_km": 7.8,
+        "travel_min": 21
+      },
+      "lp73ace": {
+        "spatial": 0.714,
+        "accessibility": 0.4,
+        "distance_km": 7.2,
+        "travel_min": 23
+      },
+      "lp857b8": {
+        "spatial": 0.943,
+        "accessibility": 0.971,
+        "distance_km": 5.2,
+        "travel_min": 13
+      },
+      "lp72a36": {
+        "spatial": 0.971,
+        "accessibility": 0.829,
+        "distance_km": 5.0,
+        "travel_min": 19
+      },
+      "lp800a1": {
+        "spatial": 0.6,
+        "accessibility": 0.629,
+        "distance_km": 7.3,
+        "travel_min": 21
+      },
+      "lp656d40c7": {
+        "spatial": 0.429,
+        "accessibility": 0.657,
+        "distance_km": 7.6,
+        "travel_min": 21
+      },
+      "lp3ca7d": {
+        "spatial": 0.286,
+        "accessibility": 0.429,
+        "distance_km": 8.2,
+        "travel_min": 23
+      },
+      "lp40d3f": {
+        "spatial": 0.686,
+        "accessibility": 0.143,
+        "distance_km": 7.2,
+        "travel_min": 25
+      },
+      "lp5f0e5": {
+        "spatial": 0.857,
+        "accessibility": 0.886,
+        "distance_km": 5.6,
+        "travel_min": 14
+      },
+      "lp6e625": {
+        "spatial": 0.914,
+        "accessibility": 0.857,
+        "distance_km": 5.5,
+        "travel_min": 18
+      },
+      "lp65589ffb": {
+        "spatial": 0.629,
+        "accessibility": 0.457,
+        "distance_km": 7.3,
+        "travel_min": 22
+      },
+      "lp6f007": {
+        "spatial": 0.743,
+        "accessibility": 0.6,
+        "distance_km": 7.1,
+        "travel_min": 21
+      }
     },
-    {
-      "id": "family_facility",
-      "persona": "Family on holiday",
-      "primary_dimension": "facility",
-      "context": "You are travelling with your family and young children for a short holiday. Good facilities matter most — a pool, space and amenities. Your budget is comfortable but not unlimited. Which hotel would you book?"
+    "fort": {
+      "lp102b02": {
+        "spatial": 0.314,
+        "accessibility": 0.343,
+        "distance_km": 3.9,
+        "travel_min": 11
+      },
+      "lp6557c6e0": {
+        "spatial": 0.486,
+        "accessibility": 0.571,
+        "distance_km": 2.7,
+        "travel_min": 7
+      },
+      "lp741c5": {
+        "spatial": 0.514,
+        "accessibility": 0.457,
+        "distance_km": 2.7,
+        "travel_min": 8
+      },
+      "lp9855f": {
+        "spatial": 0.971,
+        "accessibility": 0.8,
+        "distance_km": 0.1,
+        "travel_min": 4
+      },
+      "lp655a9e91": {
+        "spatial": 0.914,
+        "accessibility": 0.857,
+        "distance_km": 0.2,
+        "travel_min": 4
+      },
+      "lp656d3aa9": {
+        "spatial": 0.429,
+        "accessibility": 0.543,
+        "distance_km": 3.1,
+        "travel_min": 7
+      },
+      "lp803e1": {
+        "spatial": 0.686,
+        "accessibility": 0.743,
+        "distance_km": 1.6,
+        "travel_min": 4
+      },
+      "lpb1537": {
+        "spatial": 0.8,
+        "accessibility": 0.914,
+        "distance_km": 0.6,
+        "travel_min": 2
+      },
+      "lp3e58e": {
+        "spatial": 0.857,
+        "accessibility": 0.943,
+        "distance_km": 0.2,
+        "travel_min": 1
+      },
+      "lp30277": {
+        "spatial": 0.657,
+        "accessibility": 0.514,
+        "distance_km": 2.1,
+        "travel_min": 7
+      },
+      "lp67708": {
+        "spatial": 0.057,
+        "accessibility": 0.114,
+        "distance_km": 6.8,
+        "travel_min": 14
+      },
+      "lp7c172": {
+        "spatial": 0.029,
+        "accessibility": 0.057,
+        "distance_km": 7.3,
+        "travel_min": 18
+      },
+      "lp33ddb": {
+        "spatial": 0.771,
+        "accessibility": 0.686,
+        "distance_km": 1.4,
+        "travel_min": 5
+      },
+      "lpa0a8a": {
+        "spatial": 0.571,
+        "accessibility": 0.486,
+        "distance_km": 2.7,
+        "travel_min": 7
+      },
+      "lp1bc0d": {
+        "spatial": 0.829,
+        "accessibility": 0.771,
+        "distance_km": 0.3,
+        "travel_min": 4
+      },
+      "lp71118": {
+        "spatial": 0.886,
+        "accessibility": 0.886,
+        "distance_km": 0.2,
+        "travel_min": 4
+      },
+      "lp96bf6": {
+        "spatial": 0.4,
+        "accessibility": 0.2,
+        "distance_km": 3.6,
+        "travel_min": 12
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 7.8,
+        "travel_min": 27
+      },
+      "lpc0df6": {
+        "spatial": 0.343,
+        "accessibility": 0.257,
+        "distance_km": 3.8,
+        "travel_min": 12
+      },
+      "lp6574b103": {
+        "spatial": 0.543,
+        "accessibility": 0.629,
+        "distance_km": 2.7,
+        "travel_min": 6
+      },
+      "lp81760": {
+        "spatial": 0.943,
+        "accessibility": 0.971,
+        "distance_km": 0.1,
+        "travel_min": 1
+      },
+      "lp6583218e": {
+        "spatial": 0.714,
+        "accessibility": 0.714,
+        "distance_km": 1.6,
+        "travel_min": 5
+      },
+      "lp67286": {
+        "spatial": 0.257,
+        "accessibility": 0.314,
+        "distance_km": 4.3,
+        "travel_min": 11
+      },
+      "lpc08f9": {
+        "spatial": 0.6,
+        "accessibility": 0.657,
+        "distance_km": 2.5,
+        "travel_min": 6
+      },
+      "lp73ace": {
+        "spatial": 0.171,
+        "accessibility": 0.229,
+        "distance_km": 5.6,
+        "travel_min": 12
+      },
+      "lp857b8": {
+        "spatial": 0.286,
+        "accessibility": 0.171,
+        "distance_km": 4.1,
+        "travel_min": 13
+      },
+      "lp72a36": {
+        "spatial": 0.086,
+        "accessibility": 0.029,
+        "distance_km": 6.8,
+        "travel_min": 20
+      },
+      "lp800a1": {
+        "spatial": 0.629,
+        "accessibility": 0.429,
+        "distance_km": 2.5,
+        "travel_min": 8
+      },
+      "lp656d40c7": {
+        "spatial": 0.457,
+        "accessibility": 0.6,
+        "distance_km": 2.8,
+        "travel_min": 6
+      },
+      "lp3ca7d": {
+        "spatial": 0.743,
+        "accessibility": 0.829,
+        "distance_km": 1.5,
+        "travel_min": 4
+      },
+      "lp40d3f": {
+        "spatial": 0.114,
+        "accessibility": 0.143,
+        "distance_km": 6.5,
+        "travel_min": 14
+      },
+      "lp5f0e5": {
+        "spatial": 0.371,
+        "accessibility": 0.286,
+        "distance_km": 3.7,
+        "travel_min": 12
+      },
+      "lp6e625": {
+        "spatial": 0.143,
+        "accessibility": 0.086,
+        "distance_km": 5.7,
+        "travel_min": 15
+      },
+      "lp65589ffb": {
+        "spatial": 0.2,
+        "accessibility": 0.371,
+        "distance_km": 4.4,
+        "travel_min": 11
+      },
+      "lp6f007": {
+        "spatial": 0.229,
+        "accessibility": 0.4,
+        "distance_km": 4.3,
+        "travel_min": 9
+      }
     },
-    {
-      "id": "quiet_seeker",
-      "persona": "Light sleeper",
-      "primary_dimension": "disruption",
-      "context": "You are a light sleeper who dislikes traffic noise and crowds. You want a calm, peaceful stay away from the busy, noisy areas — even if it is a little further out. Which hotel would you book?"
+    "bambalapitiya": {
+      "lp102b02": {
+        "spatial": 0.829,
+        "accessibility": 0.886,
+        "distance_km": 1.3,
+        "travel_min": 3
+      },
+      "lp6557c6e0": {
+        "spatial": 0.629,
+        "accessibility": 0.657,
+        "distance_km": 2.5,
+        "travel_min": 8
+      },
+      "lp741c5": {
+        "spatial": 0.6,
+        "accessibility": 0.6,
+        "distance_km": 2.6,
+        "travel_min": 8
+      },
+      "lp9855f": {
+        "spatial": 0.029,
+        "accessibility": 0.057,
+        "distance_km": 5.2,
+        "travel_min": 17
+      },
+      "lp655a9e91": {
+        "spatial": 0.057,
+        "accessibility": 0.086,
+        "distance_km": 5.2,
+        "travel_min": 17
+      },
+      "lp656d3aa9": {
+        "spatial": 0.714,
+        "accessibility": 0.771,
+        "distance_km": 2.2,
+        "travel_min": 6
+      },
+      "lp803e1": {
+        "spatial": 0.314,
+        "accessibility": 0.343,
+        "distance_km": 3.7,
+        "travel_min": 12
+      },
+      "lpb1537": {
+        "spatial": 0.2,
+        "accessibility": 0.2,
+        "distance_km": 4.6,
+        "travel_min": 15
+      },
+      "lp3e58e": {
+        "spatial": 0.143,
+        "accessibility": 0.143,
+        "distance_km": 5.1,
+        "travel_min": 15
+      },
+      "lp30277": {
+        "spatial": 0.343,
+        "accessibility": 0.229,
+        "distance_km": 3.5,
+        "travel_min": 13
+      },
+      "lp67708": {
+        "spatial": 0.771,
+        "accessibility": 0.914,
+        "distance_km": 1.5,
+        "travel_min": 3
+      },
+      "lp7c172": {
+        "spatial": 0.743,
+        "accessibility": 0.714,
+        "distance_km": 2.1,
+        "travel_min": 7
+      },
+      "lp33ddb": {
+        "spatial": 0.229,
+        "accessibility": 0.257,
+        "distance_km": 3.9,
+        "travel_min": 13
+      },
+      "lpa0a8a": {
+        "spatial": 0.543,
+        "accessibility": 0.629,
+        "distance_km": 2.6,
+        "travel_min": 8
+      },
+      "lp1bc0d": {
+        "spatial": 0.171,
+        "accessibility": 0.029,
+        "distance_km": 5.0,
+        "travel_min": 18
+      },
+      "lp71118": {
+        "spatial": 0.114,
+        "accessibility": 0.114,
+        "distance_km": 5.2,
+        "travel_min": 17
+      },
+      "lp96bf6": {
+        "spatial": 0.371,
+        "accessibility": 0.286,
+        "distance_km": 3.4,
+        "travel_min": 12
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 12.4,
+        "travel_min": 37
+      },
+      "lpc0df6": {
+        "spatial": 0.429,
+        "accessibility": 0.429,
+        "distance_km": 3.2,
+        "travel_min": 11
+      },
+      "lp6574b103": {
+        "spatial": 0.571,
+        "accessibility": 0.571,
+        "distance_km": 2.6,
+        "travel_min": 9
+      },
+      "lp81760": {
+        "spatial": 0.086,
+        "accessibility": 0.171,
+        "distance_km": 5.2,
+        "travel_min": 15
+      },
+      "lp6583218e": {
+        "spatial": 0.286,
+        "accessibility": 0.314,
+        "distance_km": 3.7,
+        "travel_min": 12
+      },
+      "lp67286": {
+        "spatial": 0.886,
+        "accessibility": 0.8,
+        "distance_km": 1.0,
+        "travel_min": 5
+      },
+      "lpc08f9": {
+        "spatial": 0.514,
+        "accessibility": 0.543,
+        "distance_km": 2.7,
+        "travel_min": 9
+      },
+      "lp73ace": {
+        "spatial": 0.971,
+        "accessibility": 0.971,
+        "distance_km": 0.4,
+        "travel_min": 2
+      },
+      "lp857b8": {
+        "spatial": 0.4,
+        "accessibility": 0.371,
+        "distance_km": 3.4,
+        "travel_min": 11
+      },
+      "lp72a36": {
+        "spatial": 0.686,
+        "accessibility": 0.514,
+        "distance_km": 2.3,
+        "travel_min": 10
+      },
+      "lp800a1": {
+        "spatial": 0.486,
+        "accessibility": 0.486,
+        "distance_km": 2.9,
+        "travel_min": 10
+      },
+      "lp656d40c7": {
+        "spatial": 0.657,
+        "accessibility": 0.686,
+        "distance_km": 2.5,
+        "travel_min": 7
+      },
+      "lp3ca7d": {
+        "spatial": 0.257,
+        "accessibility": 0.4,
+        "distance_km": 3.7,
+        "travel_min": 11
+      },
+      "lp40d3f": {
+        "spatial": 0.857,
+        "accessibility": 0.857,
+        "distance_km": 1.3,
+        "travel_min": 3
+      },
+      "lp5f0e5": {
+        "spatial": 0.457,
+        "accessibility": 0.457,
+        "distance_km": 3.2,
+        "travel_min": 10
+      },
+      "lp6e625": {
+        "spatial": 0.8,
+        "accessibility": 0.743,
+        "distance_km": 1.5,
+        "travel_min": 6
+      },
+      "lp65589ffb": {
+        "spatial": 0.943,
+        "accessibility": 0.943,
+        "distance_km": 0.9,
+        "travel_min": 2
+      },
+      "lp6f007": {
+        "spatial": 0.914,
+        "accessibility": 0.829,
+        "distance_km": 1.0,
+        "travel_min": 4
+      }
     },
-    {
-      "id": "sightseer",
-      "persona": "City sightseer",
-      "primary_dimension": "spatial",
-      "context": "You are a tourist who wants to be central and close to Colombo's main attractions and the seafront. Being in the middle of the action matters most. Which hotel would you book?"
+    "nugegoda": {
+      "lp102b02": {
+        "spatial": 0.6,
+        "accessibility": 0.6,
+        "distance_km": 6.6,
+        "travel_min": 20
+      },
+      "lp6557c6e0": {
+        "spatial": 0.429,
+        "accessibility": 0.429,
+        "distance_km": 7.6,
+        "travel_min": 23
+      },
+      "lp741c5": {
+        "spatial": 0.543,
+        "accessibility": 0.514,
+        "distance_km": 7.4,
+        "travel_min": 22
+      },
+      "lp9855f": {
+        "spatial": 0.086,
+        "accessibility": 0.086,
+        "distance_km": 9.8,
+        "travel_min": 28
+      },
+      "lp655a9e91": {
+        "spatial": 0.114,
+        "accessibility": 0.143,
+        "distance_km": 9.8,
+        "travel_min": 28
+      },
+      "lp656d3aa9": {
+        "spatial": 0.571,
+        "accessibility": 0.571,
+        "distance_km": 7.2,
+        "travel_min": 22
+      },
+      "lp803e1": {
+        "spatial": 0.257,
+        "accessibility": 0.286,
+        "distance_km": 8.6,
+        "travel_min": 25
+      },
+      "lpb1537": {
+        "spatial": 0.2,
+        "accessibility": 0.2,
+        "distance_km": 9.4,
+        "travel_min": 28
+      },
+      "lp3e58e": {
+        "spatial": 0.057,
+        "accessibility": 0.057,
+        "distance_km": 9.9,
+        "travel_min": 29
+      },
+      "lp30277": {
+        "spatial": 0.343,
+        "accessibility": 0.343,
+        "distance_km": 7.8,
+        "travel_min": 24
+      },
+      "lp67708": {
+        "spatial": 0.914,
+        "accessibility": 0.914,
+        "distance_km": 4.5,
+        "travel_min": 15
+      },
+      "lp7c172": {
+        "spatial": 0.886,
+        "accessibility": 0.857,
+        "distance_km": 4.6,
+        "travel_min": 16
+      },
+      "lp33ddb": {
+        "spatial": 0.229,
+        "accessibility": 0.229,
+        "distance_km": 8.7,
+        "travel_min": 26
+      },
+      "lpa0a8a": {
+        "spatial": 0.457,
+        "accessibility": 0.543,
+        "distance_km": 7.5,
+        "travel_min": 22
+      },
+      "lp1bc0d": {
+        "spatial": 0.171,
+        "accessibility": 0.029,
+        "distance_km": 9.6,
+        "travel_min": 29
+      },
+      "lp71118": {
+        "spatial": 0.143,
+        "accessibility": 0.171,
+        "distance_km": 9.8,
+        "travel_min": 28
+      },
+      "lp96bf6": {
+        "spatial": 0.629,
+        "accessibility": 0.714,
+        "distance_km": 6.6,
+        "travel_min": 19
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 15.4,
+        "travel_min": 44
+      },
+      "lpc0df6": {
+        "spatial": 0.686,
+        "accessibility": 0.743,
+        "distance_km": 6.4,
+        "travel_min": 19
+      },
+      "lp6574b103": {
+        "spatial": 0.4,
+        "accessibility": 0.486,
+        "distance_km": 7.6,
+        "travel_min": 22
+      },
+      "lp81760": {
+        "spatial": 0.029,
+        "accessibility": 0.114,
+        "distance_km": 9.9,
+        "travel_min": 28
+      },
+      "lp6583218e": {
+        "spatial": 0.314,
+        "accessibility": 0.257,
+        "distance_km": 8.5,
+        "travel_min": 25
+      },
+      "lp67286": {
+        "spatial": 0.8,
+        "accessibility": 0.771,
+        "distance_km": 6.0,
+        "travel_min": 18
+      },
+      "lpc08f9": {
+        "spatial": 0.371,
+        "accessibility": 0.4,
+        "distance_km": 7.7,
+        "travel_min": 23
+      },
+      "lp73ace": {
+        "spatial": 0.829,
+        "accessibility": 0.8,
+        "distance_km": 5.4,
+        "travel_min": 18
+      },
+      "lp857b8": {
+        "spatial": 0.771,
+        "accessibility": 0.829,
+        "distance_km": 6.1,
+        "travel_min": 18
+      },
+      "lp72a36": {
+        "spatial": 0.971,
+        "accessibility": 0.971,
+        "distance_km": 3.3,
+        "travel_min": 10
+      },
+      "lp800a1": {
+        "spatial": 0.486,
+        "accessibility": 0.371,
+        "distance_km": 7.5,
+        "travel_min": 24
+      },
+      "lp656d40c7": {
+        "spatial": 0.514,
+        "accessibility": 0.457,
+        "distance_km": 7.4,
+        "travel_min": 22
+      },
+      "lp3ca7d": {
+        "spatial": 0.286,
+        "accessibility": 0.314,
+        "distance_km": 8.5,
+        "travel_min": 25
+      },
+      "lp40d3f": {
+        "spatial": 0.857,
+        "accessibility": 0.886,
+        "distance_km": 4.9,
+        "travel_min": 16
+      },
+      "lp5f0e5": {
+        "spatial": 0.657,
+        "accessibility": 0.686,
+        "distance_km": 6.5,
+        "travel_min": 19
+      },
+      "lp6e625": {
+        "spatial": 0.943,
+        "accessibility": 0.943,
+        "distance_km": 4.4,
+        "travel_min": 15
+      },
+      "lp65589ffb": {
+        "spatial": 0.714,
+        "accessibility": 0.629,
+        "distance_km": 6.2,
+        "travel_min": 20
+      },
+      "lp6f007": {
+        "spatial": 0.743,
+        "accessibility": 0.657,
+        "distance_km": 6.2,
+        "travel_min": 19
+      }
     },
-    {
-      "id": "attention",
-      "persona": "Attention check",
-      "primary_dimension": "attention",
-      "context": "This is an attention check. Please ignore your own preferences and simply select the hotel named \"Marino Beach Colombo\"."
+    "mount_lavinia": {
+      "lp102b02": {
+        "spatial": 0.714,
+        "accessibility": 0.8,
+        "distance_km": 7.0,
+        "travel_min": 18
+      },
+      "lp6557c6e0": {
+        "spatial": 0.629,
+        "accessibility": 0.543,
+        "distance_km": 8.2,
+        "travel_min": 22
+      },
+      "lp741c5": {
+        "spatial": 0.571,
+        "accessibility": 0.629,
+        "distance_km": 8.3,
+        "travel_min": 21
+      },
+      "lp9855f": {
+        "spatial": 0.057,
+        "accessibility": 0.057,
+        "distance_km": 10.8,
+        "travel_min": 30
+      },
+      "lp655a9e91": {
+        "spatial": 0.029,
+        "accessibility": 0.086,
+        "distance_km": 10.8,
+        "travel_min": 30
+      },
+      "lp656d3aa9": {
+        "spatial": 0.686,
+        "accessibility": 0.686,
+        "distance_km": 7.8,
+        "travel_min": 20
+      },
+      "lp803e1": {
+        "spatial": 0.314,
+        "accessibility": 0.343,
+        "distance_km": 9.3,
+        "travel_min": 25
+      },
+      "lpb1537": {
+        "spatial": 0.2,
+        "accessibility": 0.2,
+        "distance_km": 10.3,
+        "travel_min": 27
+      },
+      "lp3e58e": {
+        "spatial": 0.143,
+        "accessibility": 0.143,
+        "distance_km": 10.7,
+        "travel_min": 28
+      },
+      "lp30277": {
+        "spatial": 0.343,
+        "accessibility": 0.229,
+        "distance_km": 9.1,
+        "travel_min": 26
+      },
+      "lp67708": {
+        "spatial": 0.943,
+        "accessibility": 0.914,
+        "distance_km": 4.2,
+        "travel_min": 14
+      },
+      "lp7c172": {
+        "spatial": 0.971,
+        "accessibility": 0.971,
+        "distance_km": 3.6,
+        "travel_min": 11
+      },
+      "lp33ddb": {
+        "spatial": 0.229,
+        "accessibility": 0.257,
+        "distance_km": 9.5,
+        "travel_min": 25
+      },
+      "lpa0a8a": {
+        "spatial": 0.543,
+        "accessibility": 0.657,
+        "distance_km": 8.3,
+        "travel_min": 21
+      },
+      "lp1bc0d": {
+        "spatial": 0.171,
+        "accessibility": 0.029,
+        "distance_km": 10.7,
+        "travel_min": 31
+      },
+      "lp71118": {
+        "spatial": 0.086,
+        "accessibility": 0.114,
+        "distance_km": 10.8,
+        "travel_min": 30
+      },
+      "lp96bf6": {
+        "spatial": 0.371,
+        "accessibility": 0.286,
+        "distance_km": 8.6,
+        "travel_min": 25
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 17.9,
+        "travel_min": 49
+      },
+      "lpc0df6": {
+        "spatial": 0.457,
+        "accessibility": 0.429,
+        "distance_km": 8.4,
+        "travel_min": 24
+      },
+      "lp6574b103": {
+        "spatial": 0.6,
+        "accessibility": 0.571,
+        "distance_km": 8.3,
+        "travel_min": 22
+      },
+      "lp81760": {
+        "spatial": 0.114,
+        "accessibility": 0.171,
+        "distance_km": 10.8,
+        "travel_min": 28
+      },
+      "lp6583218e": {
+        "spatial": 0.286,
+        "accessibility": 0.314,
+        "distance_km": 9.4,
+        "travel_min": 25
+      },
+      "lp67286": {
+        "spatial": 0.743,
+        "accessibility": 0.771,
+        "distance_km": 6.7,
+        "travel_min": 18
+      },
+      "lpc08f9": {
+        "spatial": 0.514,
+        "accessibility": 0.514,
+        "distance_km": 8.4,
+        "travel_min": 23
+      },
+      "lp73ace": {
+        "spatial": 0.857,
+        "accessibility": 0.886,
+        "distance_km": 5.3,
+        "travel_min": 15
+      },
+      "lp857b8": {
+        "spatial": 0.486,
+        "accessibility": 0.371,
+        "distance_km": 8.4,
+        "travel_min": 24
+      },
+      "lp72a36": {
+        "spatial": 0.886,
+        "accessibility": 0.857,
+        "distance_km": 5.1,
+        "travel_min": 16
+      },
+      "lp800a1": {
+        "spatial": 0.4,
+        "accessibility": 0.486,
+        "distance_km": 8.6,
+        "travel_min": 23
+      },
+      "lp656d40c7": {
+        "spatial": 0.657,
+        "accessibility": 0.6,
+        "distance_km": 8.1,
+        "travel_min": 22
+      },
+      "lp3ca7d": {
+        "spatial": 0.257,
+        "accessibility": 0.4,
+        "distance_km": 9.4,
+        "travel_min": 24
+      },
+      "lp40d3f": {
+        "spatial": 0.914,
+        "accessibility": 0.943,
+        "distance_km": 4.4,
+        "travel_min": 13
+      },
+      "lp5f0e5": {
+        "spatial": 0.429,
+        "accessibility": 0.457,
+        "distance_km": 8.5,
+        "travel_min": 23
+      },
+      "lp6e625": {
+        "spatial": 0.829,
+        "accessibility": 0.743,
+        "distance_km": 5.8,
+        "travel_min": 19
+      },
+      "lp65589ffb": {
+        "spatial": 0.8,
+        "accessibility": 0.829,
+        "distance_km": 6.5,
+        "travel_min": 17
+      },
+      "lp6f007": {
+        "spatial": 0.771,
+        "accessibility": 0.714,
+        "distance_km": 6.6,
+        "travel_min": 19
+      }
+    },
+    "rajagiriya": {
+      "lp102b02": {
+        "spatial": 0.6,
+        "accessibility": 0.486,
+        "distance_km": 4.9,
+        "travel_min": 17
+      },
+      "lp6557c6e0": {
+        "spatial": 0.457,
+        "accessibility": 0.571,
+        "distance_km": 5.0,
+        "travel_min": 16
+      },
+      "lp741c5": {
+        "spatial": 0.714,
+        "accessibility": 0.714,
+        "distance_km": 4.6,
+        "travel_min": 15
+      },
+      "lp9855f": {
+        "spatial": 0.086,
+        "accessibility": 0.171,
+        "distance_km": 6.2,
+        "travel_min": 19
+      },
+      "lp655a9e91": {
+        "spatial": 0.114,
+        "accessibility": 0.229,
+        "distance_km": 6.2,
+        "travel_min": 19
+      },
+      "lp656d3aa9": {
+        "spatial": 0.629,
+        "accessibility": 0.514,
+        "distance_km": 4.8,
+        "travel_min": 16
+      },
+      "lp803e1": {
+        "spatial": 0.257,
+        "accessibility": 0.314,
+        "distance_km": 5.5,
+        "travel_min": 18
+      },
+      "lpb1537": {
+        "spatial": 0.2,
+        "accessibility": 0.343,
+        "distance_km": 6.0,
+        "travel_min": 18
+      },
+      "lp3e58e": {
+        "spatial": 0.057,
+        "accessibility": 0.057,
+        "distance_km": 6.3,
+        "travel_min": 20
+      },
+      "lp30277": {
+        "spatial": 0.8,
+        "accessibility": 0.8,
+        "distance_km": 4.4,
+        "travel_min": 14
+      },
+      "lp67708": {
+        "spatial": 0.4,
+        "accessibility": 0.2,
+        "distance_km": 5.3,
+        "travel_min": 19
+      },
+      "lp7c172": {
+        "spatial": 0.229,
+        "accessibility": 0.029,
+        "distance_km": 5.9,
+        "travel_min": 21
+      },
+      "lp33ddb": {
+        "spatial": 0.314,
+        "accessibility": 0.286,
+        "distance_km": 5.5,
+        "travel_min": 18
+      },
+      "lpa0a8a": {
+        "spatial": 0.657,
+        "accessibility": 0.743,
+        "distance_km": 4.8,
+        "travel_min": 15
+      },
+      "lp1bc0d": {
+        "spatial": 0.171,
+        "accessibility": 0.086,
+        "distance_km": 6.0,
+        "travel_min": 20
+      },
+      "lp71118": {
+        "spatial": 0.143,
+        "accessibility": 0.257,
+        "distance_km": 6.1,
+        "travel_min": 19
+      },
+      "lp96bf6": {
+        "spatial": 0.914,
+        "accessibility": 0.914,
+        "distance_km": 2.8,
+        "travel_min": 9
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 10.4,
+        "travel_min": 33
+      },
+      "lpc0df6": {
+        "spatial": 0.943,
+        "accessibility": 0.943,
+        "distance_km": 2.7,
+        "travel_min": 9
+      },
+      "lp6574b103": {
+        "spatial": 0.486,
+        "accessibility": 0.686,
+        "distance_km": 5.0,
+        "travel_min": 15
+      },
+      "lp81760": {
+        "spatial": 0.029,
+        "accessibility": 0.143,
+        "distance_km": 6.3,
+        "travel_min": 20
+      },
+      "lp6583218e": {
+        "spatial": 0.371,
+        "accessibility": 0.371,
+        "distance_km": 5.3,
+        "travel_min": 18
+      },
+      "lp67286": {
+        "spatial": 0.771,
+        "accessibility": 0.771,
+        "distance_km": 4.4,
+        "travel_min": 15
+      },
+      "lpc08f9": {
+        "spatial": 0.514,
+        "accessibility": 0.543,
+        "distance_km": 5.0,
+        "travel_min": 16
+      },
+      "lp73ace": {
+        "spatial": 0.429,
+        "accessibility": 0.4,
+        "distance_km": 5.1,
+        "travel_min": 18
+      },
+      "lp857b8": {
+        "spatial": 0.971,
+        "accessibility": 0.971,
+        "distance_km": 2.3,
+        "travel_min": 8
+      },
+      "lp72a36": {
+        "spatial": 0.829,
+        "accessibility": 0.829,
+        "distance_km": 3.5,
+        "travel_min": 14
+      },
+      "lp800a1": {
+        "spatial": 0.743,
+        "accessibility": 0.629,
+        "distance_km": 4.5,
+        "travel_min": 16
+      },
+      "lp656d40c7": {
+        "spatial": 0.543,
+        "accessibility": 0.657,
+        "distance_km": 4.9,
+        "travel_min": 16
+      },
+      "lp3ca7d": {
+        "spatial": 0.343,
+        "accessibility": 0.429,
+        "distance_km": 5.3,
+        "travel_min": 18
+      },
+      "lp40d3f": {
+        "spatial": 0.286,
+        "accessibility": 0.114,
+        "distance_km": 5.5,
+        "travel_min": 20
+      },
+      "lp5f0e5": {
+        "spatial": 0.886,
+        "accessibility": 0.886,
+        "distance_km": 2.8,
+        "travel_min": 9
+      },
+      "lp6e625": {
+        "spatial": 0.857,
+        "accessibility": 0.857,
+        "distance_km": 3.5,
+        "travel_min": 12
+      },
+      "lp65589ffb": {
+        "spatial": 0.571,
+        "accessibility": 0.457,
+        "distance_km": 4.9,
+        "travel_min": 17
+      },
+      "lp6f007": {
+        "spatial": 0.686,
+        "accessibility": 0.6,
+        "distance_km": 4.6,
+        "travel_min": 16
+      }
+    },
+    "kollupitiya": {
+      "lp102b02": {
+        "spatial": 0.743,
+        "accessibility": 0.714,
+        "distance_km": 1.2,
+        "travel_min": 5
+      },
+      "lp6557c6e0": {
+        "spatial": 0.971,
+        "accessibility": 0.771,
+        "distance_km": 0.1,
+        "travel_min": 5
+      },
+      "lp741c5": {
+        "spatial": 0.8,
+        "accessibility": 0.857,
+        "distance_km": 0.5,
+        "travel_min": 4
+      },
+      "lp9855f": {
+        "spatial": 0.257,
+        "accessibility": 0.086,
+        "distance_km": 2.7,
+        "travel_min": 13
+      },
+      "lp655a9e91": {
+        "spatial": 0.229,
+        "accessibility": 0.114,
+        "distance_km": 2.7,
+        "travel_min": 12
+      },
+      "lp656d3aa9": {
+        "spatial": 0.829,
+        "accessibility": 0.943,
+        "distance_km": 0.3,
+        "travel_min": 1
+      },
+      "lp803e1": {
+        "spatial": 0.714,
+        "accessibility": 0.571,
+        "distance_km": 1.2,
+        "travel_min": 7
+      },
+      "lpb1537": {
+        "spatial": 0.486,
+        "accessibility": 0.286,
+        "distance_km": 2.2,
+        "travel_min": 10
+      },
+      "lp3e58e": {
+        "spatial": 0.343,
+        "accessibility": 0.2,
+        "distance_km": 2.6,
+        "travel_min": 11
+      },
+      "lp30277": {
+        "spatial": 0.629,
+        "accessibility": 0.429,
+        "distance_km": 1.4,
+        "travel_min": 8
+      },
+      "lp67708": {
+        "spatial": 0.086,
+        "accessibility": 0.4,
+        "distance_km": 4.0,
+        "travel_min": 8
+      },
+      "lp7c172": {
+        "spatial": 0.029,
+        "accessibility": 0.143,
+        "distance_km": 4.5,
+        "travel_min": 12
+      },
+      "lp33ddb": {
+        "spatial": 0.6,
+        "accessibility": 0.514,
+        "distance_km": 1.4,
+        "travel_min": 8
+      },
+      "lpa0a8a": {
+        "spatial": 0.857,
+        "accessibility": 0.914,
+        "distance_km": 0.3,
+        "travel_min": 3
+      },
+      "lp1bc0d": {
+        "spatial": 0.371,
+        "accessibility": 0.057,
+        "distance_km": 2.5,
+        "travel_min": 13
+      },
+      "lp71118": {
+        "spatial": 0.286,
+        "accessibility": 0.171,
+        "distance_km": 2.7,
+        "travel_min": 12
+      },
+      "lp96bf6": {
+        "spatial": 0.429,
+        "accessibility": 0.314,
+        "distance_km": 2.4,
+        "travel_min": 10
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 10.2,
+        "travel_min": 33
+      },
+      "lpc0df6": {
+        "spatial": 0.4,
+        "accessibility": 0.371,
+        "distance_km": 2.4,
+        "travel_min": 9
+      },
+      "lp6574b103": {
+        "spatial": 0.914,
+        "accessibility": 0.829,
+        "distance_km": 0.1,
+        "travel_min": 4
+      },
+      "lp81760": {
+        "spatial": 0.314,
+        "accessibility": 0.229,
+        "distance_km": 2.7,
+        "travel_min": 10
+      },
+      "lp6583218e": {
+        "spatial": 0.686,
+        "accessibility": 0.543,
+        "distance_km": 1.3,
+        "travel_min": 7
+      },
+      "lp67286": {
+        "spatial": 0.543,
+        "accessibility": 0.686,
+        "distance_km": 1.5,
+        "travel_min": 5
+      },
+      "lpc08f9": {
+        "spatial": 0.886,
+        "accessibility": 0.8,
+        "distance_km": 0.3,
+        "travel_min": 4
+      },
+      "lp73ace": {
+        "spatial": 0.171,
+        "accessibility": 0.6,
+        "distance_km": 2.8,
+        "travel_min": 7
+      },
+      "lp857b8": {
+        "spatial": 0.2,
+        "accessibility": 0.343,
+        "distance_km": 2.8,
+        "travel_min": 9
+      },
+      "lp72a36": {
+        "spatial": 0.057,
+        "accessibility": 0.029,
+        "distance_km": 4.2,
+        "travel_min": 15
+      },
+      "lp800a1": {
+        "spatial": 0.771,
+        "accessibility": 0.657,
+        "distance_km": 0.8,
+        "travel_min": 6
+      },
+      "lp656d40c7": {
+        "spatial": 0.943,
+        "accessibility": 0.971,
+        "distance_km": 0.1,
+        "travel_min": 0
+      },
+      "lp3ca7d": {
+        "spatial": 0.657,
+        "accessibility": 0.629,
+        "distance_km": 1.3,
+        "travel_min": 6
+      },
+      "lp40d3f": {
+        "spatial": 0.114,
+        "accessibility": 0.486,
+        "distance_km": 3.7,
+        "travel_min": 8
+      },
+      "lp5f0e5": {
+        "spatial": 0.457,
+        "accessibility": 0.457,
+        "distance_km": 2.3,
+        "travel_min": 8
+      },
+      "lp6e625": {
+        "spatial": 0.143,
+        "accessibility": 0.257,
+        "distance_km": 3.1,
+        "travel_min": 10
+      },
+      "lp65589ffb": {
+        "spatial": 0.514,
+        "accessibility": 0.743,
+        "distance_km": 1.6,
+        "travel_min": 5
+      },
+      "lp6f007": {
+        "spatial": 0.571,
+        "accessibility": 0.886,
+        "distance_km": 1.5,
+        "travel_min": 4
+      }
+    },
+    "dehiwala": {
+      "lp102b02": {
+        "spatial": 0.714,
+        "accessibility": 0.8,
+        "distance_km": 5.6,
+        "travel_min": 13
+      },
+      "lp6557c6e0": {
+        "spatial": 0.629,
+        "accessibility": 0.6,
+        "distance_km": 6.8,
+        "travel_min": 17
+      },
+      "lp741c5": {
+        "spatial": 0.6,
+        "accessibility": 0.571,
+        "distance_km": 6.9,
+        "travel_min": 17
+      },
+      "lp9855f": {
+        "spatial": 0.057,
+        "accessibility": 0.057,
+        "distance_km": 9.5,
+        "travel_min": 26
+      },
+      "lp655a9e91": {
+        "spatial": 0.029,
+        "accessibility": 0.086,
+        "distance_km": 9.5,
+        "travel_min": 26
+      },
+      "lp656d3aa9": {
+        "spatial": 0.686,
+        "accessibility": 0.686,
+        "distance_km": 6.5,
+        "travel_min": 15
+      },
+      "lp803e1": {
+        "spatial": 0.314,
+        "accessibility": 0.343,
+        "distance_km": 8.0,
+        "travel_min": 21
+      },
+      "lpb1537": {
+        "spatial": 0.2,
+        "accessibility": 0.2,
+        "distance_km": 9.0,
+        "travel_min": 24
+      },
+      "lp3e58e": {
+        "spatial": 0.143,
+        "accessibility": 0.143,
+        "distance_km": 9.4,
+        "travel_min": 24
+      },
+      "lp30277": {
+        "spatial": 0.343,
+        "accessibility": 0.229,
+        "distance_km": 7.8,
+        "travel_min": 22
+      },
+      "lp67708": {
+        "spatial": 0.943,
+        "accessibility": 0.886,
+        "distance_km": 2.8,
+        "travel_min": 10
+      },
+      "lp7c172": {
+        "spatial": 0.971,
+        "accessibility": 0.971,
+        "distance_km": 2.3,
+        "travel_min": 6
+      },
+      "lp33ddb": {
+        "spatial": 0.229,
+        "accessibility": 0.257,
+        "distance_km": 8.2,
+        "travel_min": 22
+      },
+      "lpa0a8a": {
+        "spatial": 0.543,
+        "accessibility": 0.629,
+        "distance_km": 6.9,
+        "travel_min": 17
+      },
+      "lp1bc0d": {
+        "spatial": 0.171,
+        "accessibility": 0.029,
+        "distance_km": 9.3,
+        "travel_min": 27
+      },
+      "lp71118": {
+        "spatial": 0.114,
+        "accessibility": 0.114,
+        "distance_km": 9.5,
+        "travel_min": 26
+      },
+      "lp96bf6": {
+        "spatial": 0.371,
+        "accessibility": 0.286,
+        "distance_km": 7.3,
+        "travel_min": 21
+      },
+      "lp43673": {
+        "spatial": 0.0,
+        "accessibility": 0.0,
+        "distance_km": 16.5,
+        "travel_min": 45
+      },
+      "lpc0df6": {
+        "spatial": 0.457,
+        "accessibility": 0.429,
+        "distance_km": 7.1,
+        "travel_min": 20
+      },
+      "lp6574b103": {
+        "spatial": 0.571,
+        "accessibility": 0.543,
+        "distance_km": 6.9,
+        "travel_min": 18
+      },
+      "lp81760": {
+        "spatial": 0.086,
+        "accessibility": 0.171,
+        "distance_km": 9.5,
+        "travel_min": 24
+      },
+      "lp6583218e": {
+        "spatial": 0.286,
+        "accessibility": 0.314,
+        "distance_km": 8.0,
+        "travel_min": 21
+      },
+      "lp67286": {
+        "spatial": 0.743,
+        "accessibility": 0.743,
+        "distance_km": 5.3,
+        "travel_min": 14
+      },
+      "lpc08f9": {
+        "spatial": 0.514,
+        "accessibility": 0.514,
+        "distance_km": 7.0,
+        "travel_min": 19
+      },
+      "lp73ace": {
+        "spatial": 0.857,
+        "accessibility": 0.914,
+        "distance_km": 3.9,
+        "travel_min": 10
+      },
+      "lp857b8": {
+        "spatial": 0.486,
+        "accessibility": 0.371,
+        "distance_km": 7.1,
+        "travel_min": 20
+      },
+      "lp72a36": {
+        "spatial": 0.886,
+        "accessibility": 0.829,
+        "distance_km": 3.8,
+        "travel_min": 12
+      },
+      "lp800a1": {
+        "spatial": 0.4,
+        "accessibility": 0.486,
+        "distance_km": 7.2,
+        "travel_min": 19
+      },
+      "lp656d40c7": {
+        "spatial": 0.657,
+        "accessibility": 0.657,
+        "distance_km": 6.8,
+        "travel_min": 16
+      },
+      "lp3ca7d": {
+        "spatial": 0.257,
+        "accessibility": 0.4,
+        "distance_km": 8.1,
+        "travel_min": 20
+      },
+      "lp40d3f": {
+        "spatial": 0.914,
+        "accessibility": 0.943,
+        "distance_km": 3.1,
+        "travel_min": 8
+      },
+      "lp5f0e5": {
+        "spatial": 0.429,
+        "accessibility": 0.457,
+        "distance_km": 7.1,
+        "travel_min": 19
+      },
+      "lp6e625": {
+        "spatial": 0.829,
+        "accessibility": 0.714,
+        "distance_km": 4.4,
+        "travel_min": 15
+      },
+      "lp65589ffb": {
+        "spatial": 0.8,
+        "accessibility": 0.857,
+        "distance_km": 5.2,
+        "travel_min": 12
+      },
+      "lp6f007": {
+        "spatial": 0.771,
+        "accessibility": 0.771,
+        "distance_km": 5.3,
+        "travel_min": 14
+      }
     }
-  ],
+  },
   "tasks": [
     {
       "id": "t1",
-      "scenario_id": "budget_backpacker",
+      "anchor_id": "galle_face",
+      "persona": "Evening walker",
+      "context": "You are visiting Colombo and want to walk to Galle Face Green every evening. Being close enough to reach it on foot matters most, but you are also paying for the room yourself and cannot overspend. Which hotel would you book?",
+      "primary_dimension": "spatial",
+      "secondary_dimension": "economic",
+      "repeat_of": null,
       "is_attention_check": false,
       "option_ids": [
-        "lp9855f",
         "lp102b02",
-        "lp30277",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
         "lpb1537",
-        "lp81760"
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
       ]
     },
     {
       "id": "t2",
-      "scenario_id": "business_accessibility",
+      "anchor_id": "battaramulla",
+      "persona": "Business traveller",
+      "context": "You have two days of back-to-back meetings at government offices in Battaramulla. Reaching them quickly and predictably each morning decides your booking, though you would still like somewhere comfortable to work in the evening. Which hotel would you book?",
+      "primary_dimension": "accessibility",
+      "secondary_dimension": "facility",
+      "repeat_of": null,
       "is_attention_check": false,
       "option_ids": [
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
         "lp656d3aa9",
-        "lp81760",
+        "lp803e1",
         "lpb1537",
+        "lp3e58e",
         "lp30277",
-        "lp102b02"
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
       ]
     },
     {
       "id": "t3",
-      "scenario_id": "family_facility",
+      "anchor_id": "fort",
+      "persona": "Self-funded worker",
+      "context": "You are working in Colombo Fort for a week and paying for the room yourself, so cost comes first - but a long daily commute would eat into your working day. Which hotel would you book?",
+      "primary_dimension": "economic",
+      "secondary_dimension": "accessibility",
+      "repeat_of": null,
       "is_attention_check": false,
       "option_ids": [
-        "lp741c5",
-        "lp81760",
         "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
         "lpb1537",
-        "lp30277"
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
       ]
     },
     {
       "id": "t4",
-      "scenario_id": "quiet_seeker",
+      "anchor_id": "bambalapitiya",
+      "persona": "Family on holiday",
+      "context": "You are travelling with your family and two young children and visiting relatives in Bambalapitiya. A pool, space and good on-site facilities matter most, and being near the family helps. Which hotel would you book?",
+      "primary_dimension": "facility",
+      "secondary_dimension": "spatial",
+      "repeat_of": null,
       "is_attention_check": false,
       "option_ids": [
-        "lp81760",
         "lp102b02",
-        "lp1bc0d",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
         "lp30277",
-        "lpb1537"
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
       ]
     },
     {
       "id": "t5",
-      "scenario_id": "sightseer",
+      "anchor_id": "nugegoda",
+      "persona": "Light sleeper",
+      "context": "You are attending an event in Nugegoda but you are a light sleeper who cannot rest with traffic noise and crowds. A calm area matters most, though you do not want to pay a premium for it. Which hotel would you book?",
+      "primary_dimension": "disruption",
+      "secondary_dimension": "economic",
+      "repeat_of": null,
       "is_attention_check": false,
       "option_ids": [
-        "lp30277",
-        "lp3e58e",
-        "lp81760",
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
         "lpb1537",
-        "lp102b02"
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
       ]
     },
     {
       "id": "t6",
-      "scenario_id": "attention",
-      "is_attention_check": true,
-      "attention_answer_hotel_id": "lp102b02",
+      "anchor_id": "mount_lavinia",
+      "persona": "Beach weekender",
+      "context": "You want a weekend by the sea at Mount Lavinia. Being close to the beach is the point of the trip, but you also want somewhere peaceful rather than a busy strip. Which hotel would you book?",
+      "primary_dimension": "spatial",
+      "secondary_dimension": "disruption",
+      "repeat_of": null,
+      "is_attention_check": false,
       "option_ids": [
-        "lp6557c6e0",
-        "lp656d3aa9",
         "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
         "lpc08f9",
-        "lp30277"
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
+      ]
+    },
+    {
+      "id": "t7",
+      "anchor_id": "rajagiriya",
+      "persona": "Long-stay consultant",
+      "context": "You are on a three-week assignment with an office in Rajagiriya and a fixed daily allowance, so the nightly rate matters a great deal - but a slow commute every day would wear you down. Which hotel would you book?",
+      "primary_dimension": "economic",
+      "secondary_dimension": "accessibility",
+      "repeat_of": null,
+      "is_attention_check": false,
+      "option_ids": [
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
+      ]
+    },
+    {
+      "id": "t8",
+      "anchor_id": "kollupitiya",
+      "persona": "Value-seeking couple",
+      "context": "You and your partner are staying near Kollupitiya for a few nights and want a genuinely nice hotel - good rooms and facilities - at a price that still feels like value rather than a splurge. Which hotel would you book?",
+      "primary_dimension": "facility",
+      "secondary_dimension": "economic",
+      "repeat_of": null,
+      "is_attention_check": false,
+      "option_ids": [
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
+      ]
+    },
+    {
+      "id": "t9",
+      "anchor_id": "dehiwala",
+      "persona": "Remote worker",
+      "context": "You are working remotely for two weeks near Dehiwala. You need somewhere quiet enough to take calls all day, but you also do not want to be cut off from shops and transport. Which hotel would you book?",
+      "primary_dimension": "disruption",
+      "secondary_dimension": "spatial",
+      "repeat_of": null,
+      "is_attention_check": false,
+      "option_ids": [
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
+      ]
+    },
+    {
+      "id": "t10",
+      "anchor_id": "battaramulla",
+      "persona": "Business traveller",
+      "context": "You are again booking for two days of meetings in Battaramulla, with short and predictable travel as your priority and a comfortable room to return to. Which hotel would you book?",
+      "primary_dimension": "accessibility",
+      "secondary_dimension": "facility",
+      "repeat_of": "t2",
+      "is_attention_check": false,
+      "option_ids": [
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
+      ]
+    },
+    {
+      "id": "t_attn",
+      "anchor_id": "fort",
+      "persona": "Attention check",
+      "context": "This is an attention check. Please ignore your own preferences and simply select the hotel named \"Shangri-La Colombo\".",
+      "primary_dimension": null,
+      "secondary_dimension": null,
+      "repeat_of": null,
+      "is_attention_check": true,
+      "attention_answer_hotel_id": "lpb1537",
+      "option_ids": [
+        "lp102b02",
+        "lp6557c6e0",
+        "lp741c5",
+        "lp9855f",
+        "lp655a9e91",
+        "lp656d3aa9",
+        "lp803e1",
+        "lpb1537",
+        "lp3e58e",
+        "lp30277",
+        "lp67708",
+        "lp7c172",
+        "lp33ddb",
+        "lpa0a8a",
+        "lp1bc0d",
+        "lp71118",
+        "lp96bf6",
+        "lp43673",
+        "lpc0df6",
+        "lp6574b103",
+        "lp81760",
+        "lp6583218e",
+        "lp67286",
+        "lpc08f9",
+        "lp73ace",
+        "lp857b8",
+        "lp72a36",
+        "lp800a1",
+        "lp656d40c7",
+        "lp3ca7d",
+        "lp40d3f",
+        "lp5f0e5",
+        "lp6e625",
+        "lp65589ffb",
+        "lp6f007"
       ]
     }
   ]

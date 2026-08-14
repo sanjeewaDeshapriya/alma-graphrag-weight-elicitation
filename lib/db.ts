@@ -99,15 +99,29 @@ export async function updateDemographics(
   )} WHERE id = ${id}`;
 }
 
+/** One candidate in a ranking group: its features, where it was shown, and the label. */
+export interface OptionVec {
+  hotel_id: string;
+  components: Record<Dimension, number> | null;
+  displayed_position: number | null;
+  chosen: boolean;
+}
+
 export interface ResponseRecord {
   participantId: string;
   taskId: string;
   scenarioId: string;
+  anchorId: string;
+  primaryDimension: string | null;
+  secondaryDimension: string | null;
+  repeatOf: string | null;
   chosenHotelId: string;
-  options: Array<{ hotel_id: string; components: Record<Dimension, number> }>;
+  options: OptionVec[];
   isAttentionCheck: boolean;
   attentionPass: boolean | null;
   timing: Record<string, unknown>;
+  /** Ordered log of search / filter / sort actions taken during the task. */
+  interactions: unknown[];
 }
 
 export async function insertResponse(rec: ResponseRecord): Promise<void> {
@@ -121,20 +135,22 @@ export async function insertResponse(rec: ResponseRecord): Promise<void> {
   const sql = await getSql();
   await sql`
     INSERT INTO responses
-      (participant_id, task_id, scenario_id, chosen_hotel_id, options,
-       is_attention_check, attention_pass, timing)
+      (participant_id, task_id, scenario_id, anchor_id, primary_dimension,
+       secondary_dimension, repeat_of, chosen_hotel_id, options,
+       is_attention_check, attention_pass, timing, interactions)
     VALUES
-      (${rec.participantId}, ${rec.taskId}, ${rec.scenarioId}, ${rec.chosenHotelId},
+      (${rec.participantId}, ${rec.taskId}, ${rec.scenarioId}, ${rec.anchorId},
+       ${rec.primaryDimension}, ${rec.secondaryDimension}, ${rec.repeatOf},
+       ${rec.chosenHotelId},
        ${sql.json(rec.options as unknown as Postgres.JSONValue)},
        ${rec.isAttentionCheck}, ${rec.attentionPass},
-       ${sql.json(rec.timing as unknown as Postgres.JSONValue)})`;
+       ${sql.json(rec.timing as unknown as Postgres.JSONValue)},
+       ${sql.json(rec.interactions as unknown as Postgres.JSONValue)})`;
 }
 
 // ---------------------------------------------------------------------------
 // Admin read-side (works in both Postgres and JSONL-fallback modes)
 // ---------------------------------------------------------------------------
-
-type OptionVec = { hotel_id: string; components: Record<Dimension, number> };
 
 /** Raw participant row from either source (snake_case DB or camelCase JSONL). */
 interface RawParticipant {
@@ -155,12 +171,21 @@ interface RawResponse {
   scenarioId?: string;
   chosen_hotel_id?: string;
   chosenHotelId?: string;
+  anchor_id?: string;
+  anchorId?: string;
+  primary_dimension?: string | null;
+  primaryDimension?: string | null;
+  secondary_dimension?: string | null;
+  secondaryDimension?: string | null;
+  repeat_of?: string | null;
+  repeatOf?: string | null;
   options?: OptionVec[];
   is_attention_check?: boolean;
   isAttentionCheck?: boolean;
   attention_pass?: boolean | null;
   attentionPass?: boolean | null;
   timing?: Record<string, unknown>;
+  interactions?: unknown[];
   submitted_at?: string | Date | null;
 }
 
@@ -176,11 +201,16 @@ export interface AdminResponse {
   participantId: string;
   taskId: string;
   scenarioId: string;
+  anchorId: string;
+  primaryDimension: string | null;
+  secondaryDimension: string | null;
+  repeatOf: string | null;
   chosenHotelId: string;
   options: OptionVec[];
   isAttentionCheck: boolean;
   attentionPass: boolean | null;
   timing: Record<string, unknown>;
+  interactions: unknown[];
   submittedAt: string | null;
 }
 
@@ -204,11 +234,16 @@ function normResponse(r: RawResponse): AdminResponse {
     participantId: r.participantId ?? r.participant_id ?? "",
     taskId: r.taskId ?? r.task_id ?? "",
     scenarioId: r.scenarioId ?? r.scenario_id ?? "",
+    anchorId: r.anchorId ?? r.anchor_id ?? "",
+    primaryDimension: r.primaryDimension ?? r.primary_dimension ?? null,
+    secondaryDimension: r.secondaryDimension ?? r.secondary_dimension ?? null,
+    repeatOf: r.repeatOf ?? r.repeat_of ?? null,
     chosenHotelId: r.chosenHotelId ?? r.chosen_hotel_id ?? "",
     options: r.options ?? [],
     isAttentionCheck: Boolean(r.isAttentionCheck ?? r.is_attention_check),
     attentionPass: r.attentionPass ?? r.attention_pass ?? null,
     timing: r.timing ?? {},
+    interactions: r.interactions ?? [],
     submittedAt: isoOrNull(r.submitted_at),
   };
 }
@@ -237,8 +272,9 @@ export async function fetchAllData(): Promise<{
     SELECT id, consent, demographics, material_version, created_at
     FROM participants ORDER BY created_at`;
   const rrows = await sql<RawResponse[]>`
-    SELECT participant_id, task_id, scenario_id, chosen_hotel_id, options,
-           is_attention_check, attention_pass, timing, submitted_at
+    SELECT participant_id, task_id, scenario_id, anchor_id, primary_dimension,
+           secondary_dimension, repeat_of, chosen_hotel_id, options,
+           is_attention_check, attention_pass, timing, interactions, submitted_at
     FROM responses ORDER BY submitted_at`;
 
   return {

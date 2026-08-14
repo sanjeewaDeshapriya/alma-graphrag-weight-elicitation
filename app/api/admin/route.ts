@@ -44,8 +44,10 @@ export async function GET(request: Request) {
   const { participants, responses } = await fetchAllData();
   const material = loadMaterial();
   const hotelName = (id: string) => material.hotels[id]?.name ?? id;
+  // Scenarios are now the tasks themselves - each carries its own persona,
+  // anchor and the dimension pair it is designed to stress.
   const scenarioPersona = (id: string) =>
-    material.scenarios.find((s) => s.id === id)?.persona ?? id;
+    material.tasks.find((t) => t.id === id)?.persona ?? id;
 
   // ---- CSV export: one row per choice (for quick eyeballing / spreadsheets) --
   if (format === "csv") {
@@ -125,8 +127,8 @@ export async function GET(request: Request) {
     .filter((n) => Number.isFinite(n));
 
   // Per-scenario choice distribution (skip attention checks)
-  const byScenario = material.scenarios
-    .filter((s) => s.primary_dimension !== "attention")
+  const byScenario = material.tasks
+    .filter((s) => !s.is_attention_check)
     .map((s) => {
       const rows = responses.filter((r) => r.scenarioId === s.id);
       const counts = new Map<string, number>();

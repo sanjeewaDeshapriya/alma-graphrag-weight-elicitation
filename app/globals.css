@@ -622,3 +622,111 @@ code {
     gap: 2px;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Anchored full-pool browsing: search, sort, price filter             */
+/* ------------------------------------------------------------------ */
+
+.anchor-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 18px 0 12px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  /* Sticky so the participant can re-filter without scrolling back up a
+     35-hotel list. */
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+}
+
+.search {
+  flex: 1 1 260px;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.control {
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.search:focus,
+.control:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.btn-ghost {
+  padding: 10px 14px;
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.empty {
+  margin: 16px 0;
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+}
+
+/* Rank badge — the participant sees their position in the list, and the same
+   number is recorded with the response so the labels can be corrected for
+   position bias later. */
+.option-rank {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  z-index: 1;
+}
+
+.option {
+  position: relative;
+}
+
+.anchor-metric {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
