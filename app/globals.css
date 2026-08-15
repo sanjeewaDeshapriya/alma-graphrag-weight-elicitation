@@ -275,7 +275,9 @@ ul.facts li::before {
   padding: 14px 16px;
   cursor: pointer;
   display: flex;
-  align-items: stretch;
+  /* flex-start, not stretch: stretch forced the thumbnail to the full card
+     height, which on a narrow screen turned it into a tall thin sliver. */
+  align-items: flex-start;
   gap: 14px;
   color: var(--ink);
   transition: border-color 0.12s ease, background 0.12s ease,
@@ -285,7 +287,7 @@ ul.facts li::before {
 .option-thumb {
   flex: none;
   width: 116px;
-  min-height: 96px;
+  aspect-ratio: 4 / 3;
   border-radius: 10px;
   overflow: hidden;
   display: grid;
@@ -417,11 +419,15 @@ ul.facts li::before {
 .sticky-actions {
   position: sticky;
   bottom: 0;
+  z-index: 6;
   margin-top: 20px;
-  padding: 16px 0 4px;
+  padding: 14px 0 4px;
   display: flex;
   justify-content: flex-end;
-  background: linear-gradient(to top, var(--panel) 72%, transparent);
+  /* Solid panel colour, not a fade: the old gradient let the card text show
+     through the bar and the last card was unreadable behind it. */
+  background: var(--panel);
+  border-top: 1px solid var(--line);
 }
 
 /* Forms */
@@ -606,20 +612,81 @@ code {
 }
 
 @media (max-width: 520px) {
-  .panel {
-    padding: 20px 16px;
+  .shell {
+    padding: 16px 12px 0;
   }
+  .panel {
+    padding: 18px 14px;
+  }
+
+  /* --- cards ------------------------------------------------------- */
   .option {
     gap: 12px;
     padding: 12px;
   }
   .option-thumb {
-    width: 64px;
+    width: 84px;
   }
   .option-head {
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
+  }
+  .option-name {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+  .option-meta {
+    gap: 4px 10px;
+    font-size: 0.82rem;
+  }
+  /* Two lines is enough on a phone; more pushes the choice off-screen. */
+  .option-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .chip {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+  }
+
+  /* --- browsing controls ------------------------------------------- */
+  .controls {
+    /* Search on its own row, the two selects sharing the next one, so the
+       sticky bar stays short and the list keeps most of the screen. */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+    top: 0;
+  }
+  .search {
+    grid-column: 1 / -1;
+  }
+  .control,
+  .search {
+    width: 100%;
+    min-height: 44px; /* comfortable tap target */
+    font-size: 16px;  /* iOS zooms the page for anything smaller */
+  }
+  .controls .btn-ghost {
+    grid-column: 1 / -1;
+    min-height: 44px;
+  }
+
+  /* --- sticky Next -------------------------------------------------- */
+  .sticky-actions {
+    /* Full-bleed to the panel edges so nothing peeks out beside it. */
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  }
+  .sticky-actions .btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: 1rem;
   }
 }
 

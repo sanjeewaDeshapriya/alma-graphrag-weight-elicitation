@@ -31,13 +31,73 @@ export function storageHint(): string {
   return "Database write failed. Check the DATABASE_URL is correct and that sql/schema.sql has been applied to it.";
 }
 
+/**
+ * Schema the running code requires. Kept in sync with sql/schema.sql, which
+ * stays the canonical reference for a fresh install.
+ *
+ * This is applied automatically on the first database call of each process.
+ * The alternative — remembering to run a migration by hand after every deploy —
+ * already cost us live responses once: the code wrote `anchor_id` before the
+ * column existed, Postgres rejected every insert, and the study silently
+ * returned 500 to participants whose answers cannot be recovered. For a study
+ * collecting irreplaceable human data, a self-applying schema is worth the few
+ * milliseconds on a cold start. Every statement is idempotent.
+ */
+const ENSURE_SCHEMA = `
+CREATE TABLE IF NOT EXISTS participants (
+    id               text PRIMARY KEY,
+    consent          boolean NOT NULL DEFAULT false,
+    consent_ts       timestamptz,
+    demographics     jsonb,
+    material_version text,
+    user_agent       text,
+    created_at       timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS responses (
+    id                 bigserial PRIMARY KEY,
+    participant_id     text REFERENCES participants(id),
+    task_id            text NOT NULL,
+    scenario_id        text,
+    chosen_hotel_id    text NOT NULL,
+    options            jsonb NOT NULL,
+    is_attention_check boolean NOT NULL DEFAULT false,
+    attention_pass     boolean,
+    timing             jsonb,
+    submitted_at       timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS anchor_id           text;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS primary_dimension   text;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS secondary_dimension text;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS repeat_of           text;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS interactions        jsonb;
+CREATE INDEX IF NOT EXISTS responses_participant_idx ON responses (participant_id);
+CREATE INDEX IF NOT EXISTS responses_scenario_idx    ON responses (scenario_id);
+CREATE INDEX IF NOT EXISTS responses_anchor_idx      ON responses (anchor_id);
+`;
+
 let _sql: Sql | null = null;
+let _schemaReady: Promise<void> | null = null;
+
 async function getSql(): Promise<Sql> {
   if (!_sql) {
     const pg = (await import("postgres")).default;
     const local = /localhost|127\.0\.0\.1/.test(DATABASE_URL!);
     _sql = pg(DATABASE_URL!, { ssl: local ? false : "require" });
   }
+  if (!_schemaReady) {
+    const sql = _sql;
+    _schemaReady = sql
+      .unsafe(ENSURE_SCHEMA)
+      .then(() => undefined)
+      .catch((err: unknown) => {
+        // Don't block writes on a failed migration — the insert below will fail
+        // with a precise error, which is more useful than a generic startup
+        // crash. Clear the latch so the next request retries.
+        console.error("schema ensure failed:", err);
+        _schemaReady = null;
+      });
+  }
+  await _schemaReady;
   return _sql;
 }
 

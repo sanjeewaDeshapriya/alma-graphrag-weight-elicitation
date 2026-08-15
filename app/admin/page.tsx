@@ -41,9 +41,14 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // A token in the URL (?token=…) wins over the remembered one — that is the
+  // form the README hands out, and previously it was ignored entirely, so
+  // /admin?token=… always fell back to an empty localStorage value and 401'd.
   useEffect(() => {
-    const t = localStorage.getItem("adminToken") ?? "";
+    const fromUrl = new URLSearchParams(window.location.search).get("token");
+    const t = fromUrl ?? localStorage.getItem("adminToken") ?? "";
     setToken(t);
+    if (fromUrl) localStorage.setItem("adminToken", fromUrl);
   }, []);
 
   const load = useCallback(async (tok: string) => {
@@ -57,7 +62,13 @@ export default function Admin() {
         setData(null);
         return;
       }
-      if (!res.ok) throw new Error(`request failed (${res.status})`);
+      if (!res.ok) {
+        // Surface the server's reason. A 500 here is usually a schema drift
+        // ("column … does not exist"), which is a very different fix from a
+        // bad token — showing only the status code sends you hunting the wrong one.
+        const detail = await res.text().catch(() => "");
+        throw new Error(`request failed (${res.status}) ${detail.slice(0, 300)}`);
+      }
       setData((await res.json()) as AdminData);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load.");
