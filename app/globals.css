@@ -284,26 +284,30 @@ ul.facts li::before {
     box-shadow 0.12s ease;
 }
 
-.option-thumb {
-  flex: none;
-  width: 116px;
-  aspect-ratio: 4 / 3;
-  border-radius: 10px;
+/* Any LiteAPI photo, in a card, a room row or the gallery. */
+.photo {
   overflow: hidden;
   display: grid;
   place-items: center;
   background: var(--bg);
 }
 
-.option-thumb img {
+.photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.option-thumb.placeholder {
+.photo.placeholder {
   color: rgba(255, 255, 255, 0.92);
+}
+
+.option-thumb {
+  flex: none;
+  width: 116px;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
 }
 
 .option-body {
@@ -404,11 +408,13 @@ ul.facts li::before {
   place-items: center;
 }
 
-.option.selected .radio {
+.option.selected .radio,
+.room.selected .radio {
   border-color: var(--accent);
 }
 
-.option.selected .radio::after {
+.option.selected .radio::after,
+.room.selected .radio::after {
   content: "";
   width: 10px;
   height: 10px;
@@ -423,7 +429,9 @@ ul.facts li::before {
   margin-top: 20px;
   padding: 14px 0 4px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
   /* Solid panel colour, not a fade: the old gradient let the card text show
      through the bar and the last card was unreadable behind it. */
   background: var(--panel);
@@ -796,4 +804,372 @@ code {
   font-size: 0.8rem;
   color: var(--muted);
   margin: 6px 0 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Stage 2: hotel detail panel and room picker                         */
+/* ------------------------------------------------------------------ */
+
+.selection-summary {
+  margin: 0;
+  min-width: 0;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.option-cta {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.option-cta-row,
+.option-chosen {
+  margin: 0;
+  font-size: 0.88rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.option-chosen {
+  color: var(--good);
+  background: var(--good-soft);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+
+/* --- modal shell --------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(10, 18, 28, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.modal {
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: min(760px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal:focus {
+  outline: none;
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-title h2 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.modal-close {
+  flex: none;
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.modal-body {
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: grid;
+  gap: 22px;
+}
+
+.modal-sub {
+  font-size: 1rem;
+  margin: 0 0 10px;
+}
+
+.modal-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+
+/* --- gallery -------------------------------------------------------- */
+.gallery {
+  display: grid;
+  gap: 8px;
+}
+
+.gallery-hero {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+}
+
+.gallery-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.gallery-thumb {
+  flex: none;
+  appearance: none;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 9px;
+  background: none;
+  cursor: pointer;
+  width: 76px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.gallery-thumb .photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 7px;
+}
+
+.gallery-thumb.active {
+  border-color: var(--accent);
+}
+
+/* --- facts, ratings, tags ------------------------------------------- */
+.fact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.rating-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px 18px;
+}
+
+.rating-item-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.pros-cons {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.pros-cons p {
+  margin: 0 0 6px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+}
+
+.tag-good {
+  color: var(--good);
+  background: var(--good-soft);
+  border-color: transparent;
+}
+
+.tag-warn {
+  color: #9a5b00;
+  background: #fdf1de;
+  border-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tag-warn {
+    color: #f0b45f;
+    background: #33260f;
+  }
+}
+
+.chip-btn {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--accent);
+  border-color: var(--line-strong);
+}
+
+/* --- room list ------------------------------------------------------ */
+.rooms {
+  display: grid;
+  gap: 10px;
+}
+
+.room {
+  text-align: left;
+  width: 100%;
+  border: 1.5px solid var(--line);
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--ink);
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.room:hover {
+  border-color: var(--line-strong);
+}
+
+.room.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.room-thumb {
+  flex: none;
+  width: 96px;
+  aspect-ratio: 4 / 3;
+  border-radius: 9px;
+}
+
+.room-body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.room-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-name {
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.3;
+}
+
+.room-price {
+  flex: none;
+  text-align: right;
+  display: grid;
+  gap: 1px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.room-price-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.room-delta {
+  font-weight: 600;
+}
+
+.room-delta-best {
+  color: var(--good);
+}
+
+@media (max-width: 640px) {
+  .modal-backdrop {
+    padding: 0;
+  }
+  .modal {
+    max-height: 100%;
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  .modal-body {
+    padding: 14px;
+    gap: 18px;
+  }
+  .modal-head,
+  .modal-foot {
+    padding: 12px 14px;
+  }
+  .modal-foot .btn {
+    flex: 1;
+    min-height: 46px;
+  }
+
+  /* Price under the room details rather than beside them — at this width a
+     right-hand column squeezes the room name to two characters. */
+  .room {
+    flex-wrap: wrap;
+  }
+  .room-thumb {
+    width: 72px;
+  }
+  .room-price {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+  }
+
+  .sticky-actions {
+    flex-wrap: wrap;
+  }
+  .selection-summary {
+    flex: 1 1 100%;
+  }
 }

@@ -58,11 +58,20 @@ export async function GET(request: Request) {
       "scenario_persona",
       "chosen_hotel_id",
       "chosen_hotel_name",
+      "chosen_room_id",
+      "chosen_room_name",
+      "room_price_lkr",
+      "room_board",
+      "room_refundable",
+      "room_size_sqm",
+      "n_rooms_offered",
       "is_attention_check",
       "attention_pass",
       "decision_ms",
       "time_to_first_interaction_ms",
+      "n_hotels_opened",
       "revisions",
+      "room_revisions",
       "submitted_at",
     ];
     const lines = [header.join(",")];
@@ -76,11 +85,20 @@ export async function GET(request: Request) {
           scenarioPersona(r.scenarioId),
           r.chosenHotelId,
           hotelName(r.chosenHotelId),
+          r.chosenRoomId ?? "",
+          r.room?.name ?? "",
+          r.room?.price_lkr ?? "",
+          r.room?.board_name ?? "",
+          r.room?.refundable ?? "",
+          r.room?.size_sqm ?? "",
+          r.roomOptions.length,
           r.isAttentionCheck,
           r.attentionPass,
           t.decision_ms ?? "",
           t.time_to_first_interaction_ms ?? "",
+          t.n_hotels_opened ?? "",
           t.revisions ?? "",
+          t.room_revisions ?? "",
           r.submittedAt,
         ]
           .map(csvEscape)
@@ -149,9 +167,32 @@ export async function GET(request: Request) {
       };
     });
 
+  // Stage 2. `upgradeRate` is the headline: how often a participant passed over
+  // the cheapest room in the hotel they picked. If it were ~0 the room step
+  // would be a formality and could not price anything.
+  const withRoom = responses.filter((r) => r.room && r.roomOptions.length > 0);
+  const upgrades = withRoom.filter((r) => {
+    const cheapest = Math.min(...r.roomOptions.map((o) => o.price_lkr));
+    return (r.room?.price_lkr ?? 0) > cheapest;
+  });
+  const premiums = withRoom.map((r) => {
+    const cheapest = Math.min(...r.roomOptions.map((o) => o.price_lkr));
+    return (r.room?.price_lkr ?? 0) - cheapest;
+  });
+  const boardCounts = new Map<string, number>();
+  for (const r of withRoom) {
+    const b = r.room?.board_name ?? "unknown";
+    boardCounts.set(b, (boardCounts.get(b) ?? 0) + 1);
+  }
+
   const enrichedResponses = responses.map((r) => ({
     ...r,
     chosenHotel: hotelName(r.chosenHotelId),
+    chosenRoom: r.room?.name ?? null,
+    roomPriceLkr: r.room?.price_lkr ?? null,
+    roomBoard: r.room?.board_name ?? null,
+    roomRefundable: r.room?.refundable ?? null,
+    nRoomsOffered: r.roomOptions.length,
     persona: scenarioPersona(r.scenarioId),
     decisionMs: (r.timing as Record<string, unknown>).decision_ms ?? null,
   }));
@@ -170,6 +211,16 @@ export async function GET(request: Request) {
           ? null
           : attentionPasses.length / attentionRows.length,
       medianDecisionMs: median(decisionTimes),
+      roomChoices: withRoom.length,
+      upgradeRate: withRoom.length === 0 ? null : upgrades.length / withRoom.length,
+      medianPremiumLkr: median(premiums),
+      refundableRate:
+        withRoom.length === 0
+          ? null
+          : withRoom.filter((r) => r.room?.refundable).length / withRoom.length,
+      byBoard: [...boardCounts.entries()]
+        .map(([board, count]) => ({ board, count }))
+        .sort((a, b) => b.count - a.count),
     },
     byScenario,
     participants,

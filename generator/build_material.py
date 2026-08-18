@@ -1,10 +1,24 @@
 """
 Build study material from LIVE LiteAPI data — location-anchored design.
 
-Pulls the full Colombo hotel pool (image, facilities, description, price,
-reviews, coordinates) and assembles ten choice tasks, each ANCHORED to a real
-Colombo location (Galle Face, Battaramulla, Fort, ...). Every task shows the
-whole pool; the participant chooses one hotel.
+Pulls the full Colombo hotel pool (images, facilities, description, price,
+reviews, coordinates, guest sentiment AND bookable rooms) and assembles ten
+choice tasks, each ANCHORED to a real Colombo location (Galle Face,
+Battaramulla, Fort, ...). Every task shows the whole pool.
+
+The choice is TWO-STAGE, as a real booking is: the participant picks a hotel,
+then picks a room inside it.
+
+    stage 1  hotel   35 alternatives, scored on the five ALMA components
+    stage 2  room    2-5 offers within the chosen hotel, differing in price,
+                     board basis, refundability, size, beds and occupancy
+
+Stage 2 is not decoration. The five hotel weights are only identified up to
+scale from stage-1 clicks alone; the room step contains an explicit price
+attribute measured in rupees, so the trade-offs inside it (what a guest pays to
+add breakfast, or to keep free cancellation) put the whole weight vector on a
+monetary scale. It is the standard reason a discrete-choice design carries a
+price attribute.
 
 Why the components are split
 ----------------------------
@@ -48,7 +62,7 @@ sys.path.insert(0, str(REPO))
 
 import httpx  # noqa: E402
 
-from src.config import LITEAPI_BASE_URL, LITEAPI_KEY  # noqa: E402
+from src.config import LITEAPI_BASE_URL, LITEAPI_KEY, LITEAPI_LOS_NIGHTS  # noqa: E402
 from src.ingest.liteapi import LiteApiClient  # noqa: E402
 
 # Colombo Fort / Galle Face — the reference "city centre" for the global scores.
@@ -70,6 +84,21 @@ ANCHORS: Dict[str, Dict[str, Any]] = {
     "kollupitiya":   {"name": "Kollupitiya",      "lat": 6.9101, "lng": 79.8494},
     "dehiwala":      {"name": "Dehiwala",         "lat": 6.8511, "lng": 79.8653},
 }
+
+# Room amenities we surface as chips on a room card (real LiteAPI names → label).
+ROOM_AMENITY_CHIPS = [
+    ("Air conditioning", "AC"), ("Balcony", "Balcony"), ("Terrace", "Terrace"),
+    ("Sea view", "Sea view"), ("City view", "City view"), ("Pool view", "Pool view"),
+    ("Free WiFi", "Free WiFi"), ("Flat-screen TV", "Flat-screen TV"),
+    ("Minibar", "Minibar"), ("Safety deposit box", "Safe"), ("Safe", "Safe"),
+    ("Bath", "Bathtub"), ("Bathtub", "Bathtub"), ("Shower", "Shower"),
+    ("Coffee machine", "Coffee machine"), ("Electric kettle", "Kettle"),
+    ("Desk", "Desk"), ("Soundproofing", "Soundproofed"),
+    ("Kitchenette", "Kitchenette"), ("Refrigerator", "Fridge"),
+    ("Wardrobe or closet", "Wardrobe"), ("Private bathroom", "Private bathroom"),
+    ("Free toiletries", "Toiletries"), ("Slippers", "Slippers"),
+    ("Sofa", "Sofa"), ("Bathrobe", "Bathrobe"),
+]
 
 # Facilities we surface as chips (real LiteAPI names → short label), in priority order.
 FACILITY_CHIPS = [
@@ -221,10 +250,11 @@ def short_area(address: str) -> str:
     return (address or "Colombo").split(",")[0][:28]
 
 
-def pick_chips(facility_names: List[str], limit: int = 6) -> List[str]:
+def pick_chips(facility_names: List[str], limit: int = 6,
+               table: List[Tuple[str, str]] | None = None) -> List[str]:
     present = {f.strip().lower() for f in facility_names}
     chips: List[str] = []
-    for real, label in FACILITY_CHIPS:
+    for real, label in (table or FACILITY_CHIPS):
         if real.lower() in present and label not in chips:
             chips.append(label)
         if len(chips) >= limit:
@@ -232,7 +262,122 @@ def pick_chips(facility_names: List[str], limit: int = 6) -> List[str]:
     return chips
 
 
-def fetch_pool(city: str, fetch_n: int, pool_n: int) -> List[Dict[str, Any]]:
+def _amount(price_array: Any) -> float:
+    """First amount out of a LiteAPI money array, or 0."""
+    if isinstance(price_array, list) and price_array:
+        try:
+            return float(price_array[0].get("amount"))
+        except (TypeError, ValueError, AttributeError):
+            return 0.0
+    if isinstance(price_array, dict):
+        try:
+            return float(price_array.get("amount"))
+        except (TypeError, ValueError):
+            return 0.0
+    return 0.0
+
+
+def normalise_size_unit(unit: Any) -> str:
+    u = str(unit or "").strip().lower()
+    if u in ("sqft", "ft2", "sq ft", "square feet"):
+        return "ft²"
+    return "m²"
+
+
+def bed_summary(bed_types: List[Dict[str, Any]]) -> str:
+    """'1 x King bed' / '2 x Twin bed' — the phrasing a booking site would use."""
+    parts = []
+    for b in bed_types or []:
+        name = str(b.get("bedType") or "Bed").strip()
+        qty = int(b.get("quantity") or 1)
+        parts.append(f"{qty} x {name}" if qty > 1 else name)
+    return ", ".join(parts[:2])
+
+
+def build_room_offers(entry: Dict[str, Any], catalogue: Dict[int, Dict[str, Any]],
+                      nights: int, limit: int = 5) -> List[Dict[str, Any]]:
+    """Bookable room offers for one hotel, merging the two LiteAPI surfaces.
+
+    `/hotels/rates` gives the COMMERCIAL side of an offer — live price, board
+    basis, refundability, cancellation deadline — but only a supplier room label
+    ("TWIN STANDARD"). `/data/hotel` gives the CONTENT side — proper room name,
+    floor area, bed configuration, occupancy, photos, in-room amenities — but no
+    price. `rates[].mappedRoomId` is the join key onto `rooms[].id`, and in
+    practice it resolves for essentially every live offer.
+
+    One offer per (room, board basis, refundability): those three are what a
+    guest actually trades off inside a hotel, and keeping them distinct is the
+    point of the second stage — the price gap between "Room Only,
+    non-refundable" and "Breakfast, free cancellation" prices those attributes
+    in rupees, which is what puts the hotel-level weights on a monetary scale.
+    """
+    best: Dict[Tuple[Any, str, bool], Dict[str, Any]] = {}
+
+    for rt in entry.get("roomTypes") or []:
+        rates = rt.get("rates") or []
+        if not rates:
+            continue
+        rate = rates[0]
+        retail = rate.get("retailRate") or {}
+        total = _amount(rt.get("offerRetailRate")) or _amount(retail.get("total"))
+        if not total:
+            continue
+        per_night = total / max(nights, 1)
+
+        cancel = rate.get("cancellationPolicies") or {}
+        refundable = cancel.get("refundableTag") == "RFN"
+        infos = cancel.get("cancelPolicyInfos") or []
+        board_type = str(rate.get("boardType") or "").strip()
+        board_name = str(rate.get("boardName") or "").strip()
+
+        mapped = rate.get("mappedRoomId")
+        room = catalogue.get(int(mapped)) if mapped is not None else None
+
+        taxes = retail.get("taxesAndFees") or []
+        taxes_included = all(t.get("included") for t in taxes) if taxes else True
+
+        amenities = [
+            a.get("name") if isinstance(a, dict) else a
+            for a in ((room or {}).get("roomAmenities") or [])
+        ]
+        photos = [p.get("url") for p in ((room or {}).get("photos") or []) if p.get("url")]
+
+        offer = {
+            # Stable within a material version: the join key plus what makes this
+            # offer distinct from the others on the same room.
+            "id": f"{mapped or rt.get('roomTypeId')}-{board_type or 'NA'}-{'RFN' if refundable else 'NRF'}",
+            "name": str((room or {}).get("roomName") or rate.get("name") or "Room")[:110],
+            "price_lkr": round(per_night),
+            "board_name": board_name or "Room Only",
+            "board_type": board_type,
+            "refundable": refundable,
+            "cancel_before": (infos[0].get("cancelTime") if infos else None),
+            "taxes_included": taxes_included,
+            "max_occupancy": int((room or {}).get("maxOccupancy")
+                                 or rate.get("maxOccupancy") or 2),
+            "max_adults": int((room or {}).get("maxAdults") or rate.get("adultCount") or 2),
+            "max_children": int((room or {}).get("maxChildren") or 0),
+            "size_sqm": (room or {}).get("roomSizeSquare"),
+            # LiteAPI returns square metres as either "sqm" or "m2" depending on
+            # the supplier; both mean the same thing, so show one label.
+            "size_unit": normalise_size_unit((room or {}).get("roomSizeUnit")),
+            "beds": bed_summary((room or {}).get("bedTypes") or []),
+            "amenities": pick_chips([a for a in amenities if a], 6, ROOM_AMENITY_CHIPS),
+            "image": photos[0] if photos else None,
+            "description": strip_html((room or {}).get("description") or "")[:200],
+            "mapped_room_id": mapped,
+            "from_catalogue": room is not None,
+        }
+
+        key = (mapped, board_type, refundable)
+        if key not in best or per_night < best[key]["price_lkr"]:
+            best[key] = offer
+
+    offers = sorted(best.values(), key=lambda o: o["price_lkr"])[:limit]
+    return offers
+
+
+def fetch_pool(city: str, fetch_n: int, pool_n: int, min_rooms: int) -> List[Dict[str, Any]]:
     client = LiteApiClient()
     try:
         body = client.search_rates(city, max_results=fetch_n)
@@ -246,9 +391,15 @@ def fetch_pool(city: str, fetch_n: int, pool_n: int) -> List[Dict[str, Any]]:
             plans = client._extract_room_types(entry.get("roomTypes") or [])
             price = min((p["price"] for p in plans if p.get("price")), default=0)
             lat, lng = m.get("latitude"), m.get("longitude")
-            if not price or lat is None or lng is None or not m.get("main_photo"):
-                continue
             raw_rating = float(m.get("rating") or 0)
+            # An unrated hotel must not enter the pool. LiteAPI returns 0 for a
+            # missing guest score, which would render as "0.0" beside genuine
+            # 4.5s and read as the worst hotel on the list rather than an
+            # unknown one — biasing every task against it, and docking its
+            # hidden `facility` component too.
+            if (not price or lat is None or lng is None
+                    or not m.get("main_photo") or raw_rating <= 0):
+                continue
             rows.append({
                 "id": hid,
                 "name": m.get("name", "Hotel"),
@@ -260,6 +411,7 @@ def fetch_pool(city: str, fetch_n: int, pool_n: int) -> List[Dict[str, Any]]:
                 "address": m.get("address", ""),
                 "lat": float(lat),
                 "lng": float(lng),
+                "_entry": entry,          # kept for room extraction, stripped below
             })
     finally:
         client.close()
@@ -270,20 +422,80 @@ def fetch_pool(city: str, fetch_n: int, pool_n: int) -> List[Dict[str, Any]]:
         key = row["name"].lower()
         if key not in seen or row["review_count"] > seen[key]["review_count"]:
             seen[key] = row
-    pool = sorted(seen.values(), key=lambda h: -h["review_count"])[:pool_n]
+    candidates = sorted(seen.values(), key=lambda h: -h["review_count"])[:pool_n]
 
-    for h in pool:
+    nights = max(LITEAPI_LOS_NIGHTS, 1)
+    pool: List[Dict[str, Any]] = []
+    dropped_no_rooms = 0
+    for h in candidates:
         d = fetch_details(h["id"])
         facs = [
             f.get("name") if isinstance(f, dict) else f
             for f in (d.get("hotelFacilities") or d.get("facilities") or [])
         ]
-        h["facilities"] = pick_chips([f for f in facs if f], 6) or ["Free WiFi", "AC"]
-        h["n_facilities"] = len([f for f in facs if f])
+        facs = [str(f).strip() for f in facs if f]
+
+        catalogue = {
+            int(r["id"]): r for r in (d.get("rooms") or []) if r.get("id") is not None
+        }
+        rooms = build_room_offers(h.pop("_entry"), catalogue, nights)
+        # A hotel with a single offer makes the room step a formality, and a
+        # forced non-choice is not an observation. Drop it rather than record it.
+        if len(rooms) < min_rooms:
+            dropped_no_rooms += 1
+            continue
+
+        h["rooms"] = rooms
+        # The headline price is the cheapest bookable offer, so what the card
+        # promises is what the room list can actually deliver.
+        h["price_lkr"] = min(r["price_lkr"] for r in rooms)
+        h["facilities"] = pick_chips(facs, 6) or ["Free WiFi", "AC"]
+        h["n_facilities"] = len(facs)
         h["description"] = strip_html(d.get("hotelDescription") or d.get("description") or "")[:170]
         h["distance_km"] = round(haversine_km(h["lat"], h["lng"], CENTER_LAT, CENTER_LNG), 1)
         h["area"] = short_area(h["address"])
+        h["detail"] = build_hotel_detail(d, facs)
+        pool.append(h)
+
+    if dropped_no_rooms:
+        print(f"  dropped {dropped_no_rooms} hotels with fewer than {min_rooms} live room offers")
     return pool
+
+
+def build_hotel_detail(d: Dict[str, Any], facilities: List[str]) -> Dict[str, Any]:
+    """Everything the detail panel shows beyond the summary card.
+
+    All of it is real LiteAPI content. A participant who opens a hotel should be
+    looking at what a booking site would show them, otherwise the choice we are
+    modelling is not the choice people actually make.
+    """
+    images = [
+        {"url": im.get("url"), "caption": strip_html(im.get("caption") or "")[:60]}
+        for im in (d.get("hotelImages") or [])[:8]
+        if im.get("url")
+    ]
+    times = d.get("checkinCheckoutTimes") or {}
+    sentiment = d.get("sentiment_analysis") or {}
+    categories = [
+        {"name": c.get("name"), "rating": round(float(c.get("rating") or 0), 1)}
+        for c in (sentiment.get("categories") or [])[:6]
+        if c.get("name")
+    ]
+    return {
+        "description_full": strip_html(
+            d.get("hotelDescription") or d.get("description") or ""
+        )[:900],
+        "facilities_all": facilities[:48],
+        "n_facilities": len(facilities),
+        "images": images,
+        "checkin": times.get("checkin_start") or None,
+        "checkout": times.get("checkout") or None,
+        "hotel_type": d.get("hotelType") or None,
+        "chain": (d.get("chain") if d.get("chain") not in ("Not Available", "") else None),
+        "pros": [str(p)[:60] for p in (sentiment.get("pros") or [])[:4]],
+        "cons": [str(c)[:60] for c in (sentiment.get("cons") or [])[:4]],
+        "review_categories": categories,
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -490,13 +702,18 @@ def correlation_report(rows: List[Dict[str, float]]) -> Tuple[List[List[float]],
 
 
 # --------------------------------------------------------------------------- #
-def build(city: str, fetch_n: int, pool_n: int, seed: int, out: Path) -> None:
+def build(city: str, fetch_n: int, pool_n: int, seed: int, out: Path,
+          min_rooms: int = 2) -> None:
     rng = random.Random(seed)
     print(f"LiteAPI · fetching up to {fetch_n} {city} hotels (pool cap {pool_n})…")
-    pool = fetch_pool(city, fetch_n, pool_n)
+    pool = fetch_pool(city, fetch_n, pool_n, min_rooms)
     if len(pool) < 10:
         raise SystemExit(f"Only {len(pool)} usable hotels — need at least 10.")
+    n_rooms = sum(len(h["rooms"]) for h in pool)
+    n_mapped = sum(1 for h in pool for r in h["rooms"] if r["from_catalogue"])
     print(f"  pool of {len(pool)} hotels with real images + facilities")
+    print(f"  {n_rooms} room offers ({n_mapped} joined to the room catalogue, "
+          f"{n_rooms / len(pool):.1f} per hotel)")
 
     density = local_density(pool)
     road = fetch_road_travel_times(pool)
@@ -510,7 +727,7 @@ def build(city: str, fetch_n: int, pool_n: int, seed: int, out: Path) -> None:
         h["id"]: {
             "name": h["name"],
             "attributes": {
-                "price_lkr": h["price_lkr"],
+                "price_lkr": h["price_lkr"],       # cheapest bookable room offer
                 "rating": h["rating5"],
                 "review_count": h["review_count"],
                 "star": h["star"],
@@ -522,6 +739,8 @@ def build(city: str, fetch_n: int, pool_n: int, seed: int, out: Path) -> None:
                 "lat": h["lat"],
                 "lng": h["lng"],
             },
+            "detail": h["detail"],
+            "rooms": h["rooms"],
             "components_global": global_comp[h["id"]],
         }
         for h in pool
@@ -579,7 +798,7 @@ def build(city: str, fetch_n: int, pool_n: int, seed: int, out: Path) -> None:
     print(f"    largest off-diagonal |r| = {worst:.2f}  ->  {note}")
 
     material = {
-        "version": f"v3-anchored-{datetime.utcnow().strftime('%Y%m%d')}",
+        "version": f"v4-rooms-{datetime.utcnow().strftime('%Y%m%d')}",
         "city": city,
         "source": "liteapi",
         "generated_at": datetime.utcnow().isoformat() + "Z",
@@ -590,6 +809,11 @@ def build(city: str, fetch_n: int, pool_n: int, seed: int, out: Path) -> None:
             "n_hotels": len(pool),
             "n_tasks": len(tasks),
             "all_options_shown": True,
+            "two_stage": True,
+            "min_rooms_per_hotel": min_rooms,
+            "n_room_offers": n_rooms,
+            "n_room_offers_catalogue_joined": n_mapped,
+            "stay": {"nights": max(LITEAPI_LOS_NIGHTS, 1), "adults": 2},
             "max_abs_correlation": round(worst, 3),
             "component_correlation": {
                 d: {e: round(mat[i][j], 3) for j, e in enumerate(DIMENSIONS)}
@@ -613,11 +837,13 @@ def main() -> None:
     ap.add_argument("--fetch", type=int, default=150, help="hotels to request from LiteAPI")
     ap.add_argument("--pool", type=int, default=60, help="max hotels to keep")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--min-rooms", type=int, default=2,
+                    help="drop hotels offering fewer live room options than this")
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
     if not LITEAPI_KEY:
         raise SystemExit("LITEAPI_KEY not set in repo .env")
-    build(args.city, args.fetch, args.pool, args.seed, args.out)
+    build(args.city, args.fetch, args.pool, args.seed, args.out, args.min_rooms)
 
 
 if __name__ == "__main__":

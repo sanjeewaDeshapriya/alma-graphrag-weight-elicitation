@@ -32,6 +32,11 @@ CREATE TABLE IF NOT EXISTS responses (
     chosen_hotel_id     text NOT NULL,
     -- [{hotel_id, components{5}, displayed_position, chosen}] — the labelled group
     options             jsonb NOT NULL,
+    -- stage 2: which room inside the chosen hotel was booked, its full offer
+    -- record, and the sibling offers it was chosen over
+    chosen_room_id      text,
+    room                jsonb,
+    room_options        jsonb,
     is_attention_check  boolean NOT NULL DEFAULT false,
     attention_pass      boolean,
     -- render/first-interaction/decision times, per-option dwell, revisions
@@ -53,6 +58,10 @@ ALTER TABLE responses ADD COLUMN IF NOT EXISTS primary_dimension   text;
 ALTER TABLE responses ADD COLUMN IF NOT EXISTS secondary_dimension text;
 ALTER TABLE responses ADD COLUMN IF NOT EXISTS repeat_of           text;
 ALTER TABLE responses ADD COLUMN IF NOT EXISTS interactions        jsonb;
+-- added with the two-stage (hotel then room) design
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS chosen_room_id      text;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS room                jsonb;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS room_options        jsonb;
 
 CREATE INDEX IF NOT EXISTS responses_participant_idx ON responses (participant_id);
 CREATE INDEX IF NOT EXISTS responses_scenario_idx    ON responses (scenario_id);

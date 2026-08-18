@@ -10,6 +10,12 @@ interface Summary {
   attentionChecks: number;
   attentionPassRate: number | null;
   medianDecisionMs: number | null;
+  roomChoices: number;
+  /** Share of room picks that were NOT the cheapest room in the hotel. */
+  upgradeRate: number | null;
+  medianPremiumLkr: number | null;
+  refundableRate: number | null;
+  byBoard: { board: string; count: number }[];
 }
 interface ScenarioDist {
   scenarioId: string;
@@ -22,6 +28,11 @@ interface RespRow {
   participantId: string;
   persona: string;
   chosenHotel: string;
+  chosenRoom: string | null;
+  roomPriceLkr: number | null;
+  roomBoard: string | null;
+  roomRefundable: boolean | null;
+  nRoomsOffered: number;
   isAttentionCheck: boolean;
   attentionPass: boolean | null;
   decisionMs: number | null;
@@ -91,6 +102,8 @@ export default function Admin() {
   const pct = (x: number | null) =>
     x === null ? "—" : `${Math.round(x * 100)}%`;
   const ms = (x: number | null) => (x === null ? "—" : `${x} ms`);
+  const lkr = (x: number | null) =>
+    x === null ? "—" : `Rs ${x.toLocaleString()}`;
 
   return (
     <div className="shell">
@@ -161,6 +174,31 @@ export default function Admin() {
               />
             </div>
 
+            <h2 className="block-title">Room choices (stage 2)</h2>
+            <div className="stat-grid" style={{ marginTop: 0 }}>
+              <Stat label="Rooms picked" value={data.summary.roomChoices} />
+              <Stat
+                label="Chose above cheapest"
+                value={pct(data.summary.upgradeRate)}
+              />
+              <Stat
+                label="Median premium paid"
+                value={lkr(data.summary.medianPremiumLkr)}
+              />
+              <Stat
+                label="Chose refundable"
+                value={pct(data.summary.refundableRate)}
+              />
+            </div>
+            {data.summary.byBoard.length > 0 && (
+              <p className="hint">
+                Board basis:{" "}
+                {data.summary.byBoard
+                  .map((b) => `${b.board} (${b.count})`)
+                  .join(" · ")}
+              </p>
+            )}
+
             <h2 className="block-title">Choice distribution by scenario</h2>
             {data.byScenario.map((s) => (
               <div key={s.scenarioId} className="scenario-dist">
@@ -202,6 +240,8 @@ export default function Admin() {
                     <th>Participant</th>
                     <th>Scenario</th>
                     <th>Chose</th>
+                    <th>Room</th>
+                    <th className="num">Room price</th>
                     <th className="num">Decision</th>
                     <th>Attn</th>
                     <th>When</th>
@@ -215,6 +255,20 @@ export default function Admin() {
                       </td>
                       <td>{r.persona}</td>
                       <td>{r.chosenHotel}</td>
+                      <td
+                        title={
+                          r.chosenRoom
+                            ? `${r.roomBoard} · ${
+                                r.roomRefundable
+                                  ? "refundable"
+                                  : "non-refundable"
+                              } · 1 of ${r.nRoomsOffered}`
+                            : undefined
+                        }
+                      >
+                        {r.chosenRoom ?? "—"}
+                      </td>
+                      <td className="num">{lkr(r.roomPriceLkr)}</td>
                       <td className="num">
                         {r.decisionMs === null ? "—" : `${r.decisionMs} ms`}
                       </td>

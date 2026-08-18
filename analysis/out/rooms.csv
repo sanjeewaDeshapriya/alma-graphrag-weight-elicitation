@@ -1,0 +1,6 @@
+qid,participant_id,task_id,anchor_id,hotel_id,room_id,room_name,label,price_lkr,price_delta_lkr,board_name,breakfast,refundable,size_sqm,max_occupancy,beds,room_position,n_offers,panel_ms,room_revisions,decision_ms,age_band,occupation,salary_band,home_area
+1,b853ce1d-3cce-4c9d-93c8-8632e1508b17,t1,galle_face,lp9855f,1459963988-RO-RFN,Superior Twin Room,0,28429,0,Room Only,0,1,22,2,2 x Twin bed,1,5,12018,0,163365,,,,
+1,b853ce1d-3cce-4c9d-93c8-8632e1508b17,t1,galle_face,lp9855f,1459638294-BI-RFN,Superior Balcony Room,1,32800,4371,Breakfast Included,1,1,31,2,King bed,2,5,12018,0,163365,,,,
+1,b853ce1d-3cce-4c9d-93c8-8632e1508b17,t1,galle_face,lp9855f,1459963988-BI-RFN,Superior Twin Room,0,37170,8741,Breakfast Included,1,1,22,2,2 x Twin bed,3,5,12018,0,163365,,,,
+1,b853ce1d-3cce-4c9d-93c8-8632e1508b17,t1,galle_face,lp9855f,256041-RO-RFN,Deluxe Suite with 20% off on Laundry Services,0,50292,21863,Room Only,0,1,46,3,2 x Twin bed,4,5,12018,0,163365,,,,
+1,b853ce1d-3cce-4c9d-93c8-8632e1508b17,t1,galle_face,lp9855f,256041-BI-RFN,Deluxe Suite with 20% off on Laundry Services,0,59040,30611,Breakfast Included,1,1,46,3,2 x Twin bed,5,5,12018,0,163365,,,,
