@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { DisplayTask, DisplayOption } from "@/lib/material";
+import type { DisplayTask, DisplayOption, RoomOffer } from "@/lib/material";
 
 interface Props {
   tasks: DisplayTask[];
@@ -18,12 +18,27 @@ const SORT_LABELS: Record<SortKey, string> = {
   rating: "Highest rated",
 };
 
+/** A confirmed booking: a hotel AND the room chosen inside it. */
+interface Selection {
+  hotelId: string;
+  roomId: string;
+}
+
 /** One recorded UI action. The order and timing of these is data, not telemetry:
  *  a participant who sorts by price before choosing is telling us something the
  *  final click alone does not. */
 interface Interaction {
   at_ms: number;
-  kind: "search" | "sort" | "price_filter" | "reset";
+  kind:
+    | "search"
+    | "sort"
+    | "price_filter"
+    | "reset"
+    | "open_hotel"
+    | "close_hotel"
+    | "gallery"
+    | "select_room"
+    | "confirm_room";
   value: string;
 }
 
@@ -31,9 +46,19 @@ interface Interaction {
 interface TaskTiming {
   renderedAt: number;
   firstInteractionAt: number | null;
+  /** Hover dwell on each hotel card in the list. */
   dwellMs: Record<string, number>;
   hoverStart: { id: string; at: number } | null;
+  /** Time spent inside each hotel's detail panel — the deliberation signal. */
+  panelMs: Record<string, number>;
+  panelStart: { id: string; at: number } | null;
+  /** Ordered hotel ids whose detail panel was opened (repeats included). */
+  opens: string[];
+  /** Every room pick, including ones later changed. */
+  roomPicks: { hotel_id: string; room_id: string; at_ms: number }[];
+  /** Times the confirmed hotel changed, and times the room changed. */
   revisions: number;
+  roomRevisions: number;
   interactions: Interaction[];
 }
 
@@ -44,16 +69,30 @@ function freshTiming(): TaskTiming {
     firstInteractionAt: null,
     dwellMs: {},
     hoverStart: null,
+    panelMs: {},
+    panelStart: null,
+    opens: [],
+    roomPicks: [],
     revisions: 0,
+    roomRevisions: 0,
     interactions: [],
   };
+}
+
+const rs = (n: number) => `Rs ${n.toLocaleString()}`;
+
+/** A missing guest score is unknown, not zero — never render it as "0.0". */
+function Rating({ value }: { value: number }) {
+  if (!value) return <span className="muted">No guest rating</span>;
+  return <span className="rating-badge">★ {value.toFixed(1)}</span>;
 }
 
 export default function StudyClient({ tasks }: Props) {
   const router = useRouter();
   const [pid, setPid] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Selection | null>(null);
+  const [openHotelId, setOpenHotelId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   // Browsing controls. `sort` starts at "distance" so the list opens ordered by
@@ -77,6 +116,7 @@ export default function StudyClient({ tasks }: Props) {
   useEffect(() => {
     timing.current = freshTiming();
     setSelected(null);
+    setOpenHotelId(null);
     setQuery("");
     setSort("distance");
     setMaxPrice(null);
@@ -120,18 +160,61 @@ export default function StudyClient({ tasks }: Props) {
     }
   }, []);
 
-  const choose = useCallback(
+  const task = tasks[idx];
+
+  /** Bank the time spent in the currently open panel, if there is one. */
+  const flushPanel = useCallback(() => {
+    const ps = timing.current.panelStart;
+    if (!ps) return null;
+    timing.current.panelMs[ps.id] =
+      (timing.current.panelMs[ps.id] ?? 0) + (now() - ps.at);
+    timing.current.panelStart = null;
+    return ps.id;
+  }, []);
+
+  const openHotel = useCallback(
     (id: string) => {
-      markInteraction();
-      setSelected((prev) => {
-        if (prev !== null && prev !== id) timing.current.revisions += 1;
-        return id;
-      });
+      onHoverEnd(id);
+      // Opening one panel straight from another would otherwise drop the first
+      // panel's dwell time on the floor, and dwell is the whole point of it.
+      flushPanel();
+      timing.current.opens.push(id);
+      timing.current.panelStart = { id, at: now() };
+      logInteraction("open_hotel", id);
+      setOpenHotelId(id);
     },
-    [markInteraction],
+    [flushPanel, logInteraction, onHoverEnd],
   );
 
-  const task = tasks[idx];
+  const closeHotel = useCallback(
+    (reason: string) => {
+      const id = flushPanel();
+      if (id) logInteraction("close_hotel", `${id}:${reason}`);
+      setOpenHotelId(null);
+    },
+    [flushPanel, logInteraction],
+  );
+
+  /** Confirm a hotel+room pair from inside the detail panel. */
+  const confirmRoom = useCallback(
+    (hotelId: string, roomId: string) => {
+      timing.current.roomPicks.push({
+        hotel_id: hotelId,
+        room_id: roomId,
+        at_ms: Math.round(now() - timing.current.renderedAt),
+      });
+      setSelected((prev) => {
+        if (prev) {
+          if (prev.hotelId !== hotelId) timing.current.revisions += 1;
+          else if (prev.roomId !== roomId) timing.current.roomRevisions += 1;
+        }
+        return { hotelId, roomId };
+      });
+      logInteraction("confirm_room", `${hotelId}:${roomId}`);
+      closeHotel("confirmed");
+    },
+    [closeHotel, logInteraction],
+  );
 
   const priceCeiling = useMemo(() => {
     if (!task) return 0;
@@ -149,7 +232,8 @@ export default function StudyClient({ tasks }: Props) {
       return (
         o.name.toLowerCase().includes(q) ||
         o.attributes.area.toLowerCase().includes(q) ||
-        o.attributes.amenities.some((a) => a.toLowerCase().includes(q))
+        o.attributes.amenities.some((a) => a.toLowerCase().includes(q)) ||
+        o.rooms.some((r) => r.name.toLowerCase().includes(q))
       );
     });
     list = [...list];
@@ -173,10 +257,15 @@ export default function StudyClient({ tasks }: Props) {
     return list;
   }, [task, query, sort, maxPrice]);
 
+  const openOption = useMemo(
+    () => task?.options.find((o) => o.hotel_id === openHotelId) ?? null,
+    [task, openHotelId],
+  );
+
   async function submit() {
     if (!selected || !pid || !task) return;
     setSubmitting(true);
-    onHoverEnd(selected);
+    onHoverEnd(selected.hotelId);
 
     const t = timing.current;
 
@@ -191,7 +280,8 @@ export default function StudyClient({ tasks }: Props) {
     const payload = {
       participantId: pid,
       taskId: task.id,
-      chosenHotelId: selected,
+      chosenHotelId: selected.hotelId,
+      chosenRoomId: selected.roomId,
       positions,
       interactions: t.interactions,
       timing: {
@@ -201,7 +291,19 @@ export default function StudyClient({ tasks }: Props) {
         dwell_ms: Object.fromEntries(
           Object.entries(t.dwellMs).map(([k, v]) => [k, Math.round(v)]),
         ),
+        // Stage-2 deliberation: how long the participant spent inside each
+        // hotel's detail panel, and how they moved between them.
+        panel_ms: Object.fromEntries(
+          Object.entries(t.panelMs).map(([k, v]) => [k, Math.round(v)]),
+        ),
+        hotels_opened: t.opens,
+        n_hotels_opened: new Set(t.opens).size,
+        room_picks: t.roomPicks,
+        // Changes to the CONFIRMED choice. Switching between rooms inside an
+        // open panel before booking is not counted here — every one of those is
+        // in `interactions` as a `select_room` event.
         revisions: t.revisions,
+        room_revisions: t.roomRevisions,
         task_index: idx,
         // Final state of the browsing controls, so the choice can be read
         // against the list the participant had actually narrowed it to.
@@ -236,8 +338,14 @@ export default function StudyClient({ tasks }: Props) {
   if (!pid || !task) return null;
 
   const pct = Math.round((idx / tasks.length) * 100);
+  const selectedOption =
+    selected && task.options.find((o) => o.hotel_id === selected.hotelId);
+  const selectedRoom =
+    selected && selectedOption
+      ? selectedOption.rooms.find((r) => r.id === selected.roomId)
+      : undefined;
   const selectedStillVisible =
-    selected !== null && visible.some((o) => o.hotel_id === selected);
+    selected !== null && visible.some((o) => o.hotel_id === selected.hotelId);
 
   return (
     <div className="shell">
@@ -268,7 +376,7 @@ export default function StudyClient({ tasks }: Props) {
           <input
             type="search"
             className="search"
-            placeholder="Search by hotel name, area or facility…"
+            placeholder="Search by hotel name, area, facility or room…"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -309,7 +417,7 @@ export default function StudyClient({ tasks }: Props) {
               .filter((p) => p < priceCeiling)
               .map((p) => (
                 <option key={p} value={p}>
-                  Up to Rs {p.toLocaleString()}
+                  Up to {rs(p)}
                 </option>
               ))}
           </select>
@@ -332,7 +440,8 @@ export default function StudyClient({ tasks }: Props) {
 
         <p className="prompt">
           Showing <strong>{visible.length}</strong> of {task.options.length}{" "}
-          hotels. Select one to continue.
+          hotels. Open a hotel to see its rooms, then pick the room you would
+          book.
         </p>
 
         {visible.length === 0 ? (
@@ -347,8 +456,10 @@ export default function StudyClient({ tasks }: Props) {
                 option={o}
                 position={i + 1}
                 anchorName={task.anchor.name}
-                selected={selected === o.hotel_id}
-                onChoose={() => choose(o.hotel_id)}
+                selectedRoom={
+                  selected?.hotelId === o.hotel_id ? selectedRoom : undefined
+                }
+                onOpen={() => openHotel(o.hotel_id)}
                 onHoverStart={() => onHoverStart(o.hotel_id)}
                 onHoverEnd={() => onHoverEnd(o.hotel_id)}
               />
@@ -364,6 +475,14 @@ export default function StudyClient({ tasks }: Props) {
         )}
 
         <div className="sticky-actions">
+          {selectedOption && selectedRoom ? (
+            <p className="selection-summary">
+              <strong>{selectedOption.name}</strong> · {selectedRoom.name} ·{" "}
+              {rs(selectedRoom.price_lkr)}/night
+            </p>
+          ) : (
+            <p className="selection-summary muted">No room chosen yet</p>
+          )}
           <button
             className="btn btn-primary"
             disabled={!selected || submitting}
@@ -373,9 +492,349 @@ export default function StudyClient({ tasks }: Props) {
           </button>
         </div>
       </div>
+
+      {openOption && (
+        <HotelDetailPanel
+          option={openOption}
+          anchorName={task.anchor.name}
+          initialRoomId={
+            selected?.hotelId === openOption.hotel_id ? selected.roomId : null
+          }
+          onClose={(reason) => closeHotel(reason)}
+          onSelectRoom={(roomId) =>
+            logInteraction("select_room", `${openOption.hotel_id}:${roomId}`)
+          }
+          onGallery={(i) =>
+            logInteraction("gallery", `${openOption.hotel_id}:${i}`)
+          }
+          onConfirm={(roomId) => confirmRoom(openOption.hotel_id, roomId)}
+        />
+      )}
     </div>
   );
 }
+
+/* -------------------------------------------------------------------------- */
+/* Hotel detail panel — stage 2                                               */
+/* -------------------------------------------------------------------------- */
+
+function HotelDetailPanel({
+  option,
+  anchorName,
+  initialRoomId,
+  onClose,
+  onSelectRoom,
+  onGallery,
+  onConfirm,
+}: {
+  option: DisplayOption;
+  anchorName: string;
+  initialRoomId: string | null;
+  onClose: (reason: string) => void;
+  onSelectRoom: (roomId: string) => void;
+  onGallery: (index: number) => void;
+  onConfirm: (roomId: string) => void;
+}) {
+  const a = option.attributes;
+  const d = option.detail;
+  const [roomId, setRoomId] = useState<string | null>(initialRoomId);
+  const [heroIdx, setHeroIdx] = useState(0);
+  const [allFacilities, setAllFacilities] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Escape closes, and the page behind must not scroll while the panel is up.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose("escape");
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    dialogRef.current?.focus();
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  const gallery = d.images.length
+    ? d.images
+    : a.image
+      ? [{ url: a.image, caption: "" }]
+      : [];
+  const cheapest = Math.min(...option.rooms.map((r) => r.price_lkr));
+  const facilities = allFacilities
+    ? d.facilities_all
+    : d.facilities_all.slice(0, 12);
+
+  return (
+    <div className="modal-backdrop" onClick={() => onClose("backdrop")}>
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={option.name}
+        tabIndex={-1}
+        ref={dialogRef}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className="modal-head">
+          <div className="modal-title">
+            <h2>{option.name}</h2>
+            <div className="option-meta">
+              <Rating value={a.rating} />
+              {a.review_count != null && (
+                <span>{a.review_count.toLocaleString()} reviews</span>
+              )}
+              {a.star > 0 && <span>{a.star}-star</span>}
+              <span className="anchor-metric">
+                {option.anchor_distance_km} km · {option.anchor_travel_min} min
+                to {anchorName}
+              </span>
+              <span>{a.area}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="modal-close"
+            aria-label="Close"
+            onClick={() => onClose("button")}
+          >
+            ✕
+          </button>
+        </header>
+
+        <div className="modal-body">
+          {gallery.length > 0 && (
+            <div className="gallery">
+              <Photo
+                src={gallery[Math.min(heroIdx, gallery.length - 1)].url}
+                name={option.name}
+                className="gallery-hero"
+              />
+              {gallery.length > 1 && (
+                <div className="gallery-strip">
+                  {gallery.map((im, i) => (
+                    <button
+                      key={im.url}
+                      type="button"
+                      className={`gallery-thumb${i === heroIdx ? " active" : ""}`}
+                      aria-label={im.caption || `Photo ${i + 1}`}
+                      onClick={() => {
+                        setHeroIdx(i);
+                        onGallery(i);
+                      }}
+                    >
+                      <Photo src={im.url} name={option.name} />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {d.description_full && (
+            <p className="modal-desc">{d.description_full}</p>
+          )}
+
+          <div className="fact-row">
+            {d.checkin && (
+              <span>
+                Check-in <strong>{d.checkin}</strong>
+              </span>
+            )}
+            {d.checkout && (
+              <span>
+                Check-out <strong>{d.checkout}</strong>
+              </span>
+            )}
+            {d.hotel_type && <span>{d.hotel_type}</span>}
+            {d.chain && <span>{d.chain}</span>}
+          </div>
+
+          {d.review_categories.length > 0 && (
+            <section>
+              <h3 className="modal-sub">Guest ratings</h3>
+              <div className="rating-grid">
+                {d.review_categories.map((c) => (
+                  <div key={c.name} className="rating-item">
+                    <div className="rating-item-head">
+                      <span>{c.name}</span>
+                      <strong>{c.rating.toFixed(1)}</strong>
+                    </div>
+                    <div className="dist-bar">
+                      <span
+                        className="dist-fill"
+                        style={{ width: `${Math.min(c.rating * 10, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {(d.pros.length > 0 || d.cons.length > 0) && (
+                <div className="pros-cons">
+                  {d.pros.length > 0 && (
+                    <p>
+                      <span className="tag tag-good">Guests liked</span>{" "}
+                      {d.pros.join(" · ")}
+                    </p>
+                  )}
+                  {d.cons.length > 0 && (
+                    <p>
+                      <span className="tag">Guests noted</span>{" "}
+                      {d.cons.join(" · ")}
+                    </p>
+                  )}
+                </div>
+              )}
+            </section>
+          )}
+
+          {d.facilities_all.length > 0 && (
+            <section>
+              <h3 className="modal-sub">
+                Facilities <span className="muted">({d.n_facilities})</span>
+              </h3>
+              <div className="chips">
+                {facilities.map((f) => (
+                  <span key={f} className="chip">
+                    {f}
+                  </span>
+                ))}
+                {d.facilities_all.length > 12 && (
+                  <button
+                    type="button"
+                    className="chip chip-btn"
+                    onClick={() => setAllFacilities((v) => !v)}
+                  >
+                    {allFacilities
+                      ? "Show fewer"
+                      : `+${d.facilities_all.length - 12} more`}
+                  </button>
+                )}
+              </div>
+            </section>
+          )}
+
+          <section>
+            <h3 className="modal-sub">
+              Choose a room{" "}
+              <span className="muted">({option.rooms.length} available)</span>
+            </h3>
+            <div className="rooms">
+              {option.rooms.map((room) => (
+                <RoomCard
+                  key={room.id}
+                  room={room}
+                  cheapest={cheapest}
+                  selected={roomId === room.id}
+                  onSelect={() => {
+                    setRoomId(room.id);
+                    onSelectRoom(room.id);
+                  }}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <footer className="modal-foot">
+          <button
+            type="button"
+            className="btn"
+            onClick={() => onClose("cancel")}
+          >
+            Back to hotels
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={!roomId}
+            onClick={() => roomId && onConfirm(roomId)}
+          >
+            {roomId ? "Book this room" : "Select a room"}
+          </button>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function RoomCard({
+  room,
+  cheapest,
+  selected,
+  onSelect,
+}: {
+  room: RoomOffer;
+  cheapest: number;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const delta = room.price_lkr - cheapest;
+  return (
+    <button
+      type="button"
+      className={`room${selected ? " selected" : ""}`}
+      aria-pressed={selected}
+      onClick={onSelect}
+    >
+      <Photo src={room.image} name={room.name} className="room-thumb" />
+
+      <div className="room-body">
+        <div className="room-head">
+          <span className="radio" />
+          <span className="room-name">{room.name}</span>
+        </div>
+
+        <div className="option-meta">
+          {room.beds && <span>{room.beds}</span>}
+          {room.size_sqm != null && (
+            <span>
+              {room.size_sqm} {room.size_unit}
+            </span>
+          )}
+          <span>
+            {`Sleeps ${room.max_occupancy}`}
+            {room.max_children > 0 &&
+              `, up to ${room.max_children} ${
+                room.max_children === 1 ? "child" : "children"
+              }`}
+          </span>
+        </div>
+
+        <div className="chips">
+          <span className={`tag ${room.board_type === "RO" ? "" : "tag-good"}`}>
+            {room.board_name}
+          </span>
+          <span className={`tag ${room.refundable ? "tag-good" : "tag-warn"}`}>
+            {room.refundable ? "Free cancellation" : "Non-refundable"}
+          </span>
+          {room.amenities.map((am) => (
+            <span key={am} className="chip">
+              {am}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="room-price">
+        <span className="room-price-value">{rs(room.price_lkr)}</span>
+        <small>per night</small>
+        {delta > 0 ? (
+          <small className="room-delta">+{rs(delta)} vs cheapest</small>
+        ) : (
+          <small className="room-delta room-delta-best">Lowest price</small>
+        )}
+        <small>{room.taxes_included ? "Taxes included" : "+ taxes"}</small>
+      </div>
+    </button>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Shared bits                                                                */
+/* -------------------------------------------------------------------------- */
 
 /** Stable hue in [0,360) derived from a string, for the placeholder tint. */
 function hashHue(s: string): number {
@@ -406,21 +865,31 @@ function HotelIcon() {
   );
 }
 
-function Thumb({ name, image }: { name: string; image?: string }) {
+/** An image that degrades to a neutral tinted placeholder rather than a broken
+ *  icon — a missing photo must not read as a worse hotel. */
+function Photo({
+  src,
+  name,
+  className = "",
+}: {
+  src?: string | null;
+  name: string;
+  className?: string;
+}) {
   const [failed, setFailed] = useState(false);
   const h = hashHue(name);
   const bg = `linear-gradient(140deg, hsl(${h} 42% 42%), hsl(${(h + 40) % 360} 46% 30%))`;
 
-  if (image && !failed) {
+  if (src && !failed) {
     return (
-      <div className="option-thumb">
+      <div className={`photo ${className}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={image} alt="" loading="lazy" onError={() => setFailed(true)} />
+        <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />
       </div>
     );
   }
   return (
-    <div className="option-thumb placeholder" style={{ backgroundImage: bg }}>
+    <div className={`photo placeholder ${className}`} style={{ backgroundImage: bg }}>
       <HotelIcon />
     </div>
   );
@@ -430,26 +899,27 @@ function OptionCard({
   option,
   position,
   anchorName,
-  selected,
-  onChoose,
+  selectedRoom,
+  onOpen,
   onHoverStart,
   onHoverEnd,
 }: {
   option: DisplayOption;
   position: number;
   anchorName: string;
-  selected: boolean;
-  onChoose: () => void;
+  selectedRoom: RoomOffer | undefined;
+  onOpen: () => void;
   onHoverStart: () => void;
   onHoverEnd: () => void;
 }) {
   const a = option.attributes;
+  const selected = Boolean(selectedRoom);
   return (
     <button
       type="button"
       className={`option${selected ? " selected" : ""}`}
       aria-pressed={selected}
-      onClick={onChoose}
+      onClick={onOpen}
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}
       onFocus={onHoverStart}
@@ -459,7 +929,7 @@ function OptionCard({
         {position}
       </span>
 
-      <Thumb name={option.name} image={a.image} />
+      <Photo src={a.image} name={option.name} className="option-thumb" />
 
       <div className="option-body">
         <div className="option-head">
@@ -468,12 +938,12 @@ function OptionCard({
             <span className="option-name">{option.name}</span>
           </div>
           <span className="option-price">
-            Rs {a.price_lkr.toLocaleString()} <small>/ night</small>
+            <small>from</small> {rs(a.price_lkr)} <small>/ night</small>
           </span>
         </div>
 
         <div className="option-meta">
-          <span className="rating-badge">★ {a.rating.toFixed(1)}</span>
+          <Rating value={a.rating} />
           {a.review_count != null && (
             <span>{a.review_count.toLocaleString()} reviews</span>
           )}
@@ -496,6 +966,22 @@ function OptionCard({
             </span>
           ))}
         </div>
+
+        {selectedRoom ? (
+          <p className="option-chosen">
+            Booked: <strong>{selectedRoom.name}</strong> ·{" "}
+            {selectedRoom.board_name} · {rs(selectedRoom.price_lkr)}/night
+            <span className="option-cta">Change room</span>
+          </p>
+        ) : (
+          <p className="option-cta-row">
+            {/* Template literal, not `View {n} rooms`: JSX drops the space
+                after a leading text run here and it renders as "5rooms". */}
+            <span className="option-cta">
+              {`View ${option.rooms.length} rooms & details →`}
+            </span>
+          </p>
+        )}
       </div>
     </button>
   );

@@ -10,7 +10,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type Postgres from "postgres";
-import type { Dimension } from "./material";
+import type { Dimension, RoomOffer } from "./material";
 
 type Sql = Postgres.Sql;
 
@@ -70,6 +70,9 @@ ALTER TABLE responses ADD COLUMN IF NOT EXISTS primary_dimension   text;
 ALTER TABLE responses ADD COLUMN IF NOT EXISTS secondary_dimension text;
 ALTER TABLE responses ADD COLUMN IF NOT EXISTS repeat_of           text;
 ALTER TABLE responses ADD COLUMN IF NOT EXISTS interactions        jsonb;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS chosen_room_id      text;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS room                jsonb;
+ALTER TABLE responses ADD COLUMN IF NOT EXISTS room_options        jsonb;
 CREATE INDEX IF NOT EXISTS responses_participant_idx ON responses (participant_id);
 CREATE INDEX IF NOT EXISTS responses_scenario_idx    ON responses (scenario_id);
 CREATE INDEX IF NOT EXISTS responses_anchor_idx      ON responses (anchor_id);
@@ -167,6 +170,21 @@ export interface OptionVec {
   chosen: boolean;
 }
 
+/** One stage-2 alternative: an offer inside the chosen hotel, and the label. */
+export interface RoomVec {
+  room_id: string;
+  name: string;
+  price_lkr: number;
+  board_type: string;
+  board_name: string;
+  refundable: boolean;
+  size_sqm: number | null;
+  max_occupancy: number;
+  beds: string;
+  displayed_position: number;
+  chosen: boolean;
+}
+
 export interface ResponseRecord {
   participantId: string;
   taskId: string;
@@ -176,6 +194,10 @@ export interface ResponseRecord {
   secondaryDimension: string | null;
   repeatOf: string | null;
   chosenHotelId: string;
+  /** null only if a client posted without one — the hotel label still stands. */
+  chosenRoomId: string | null;
+  room: RoomOffer | null;
+  roomOptions: RoomVec[];
   options: OptionVec[];
   isAttentionCheck: boolean;
   attentionPass: boolean | null;
@@ -197,12 +219,16 @@ export async function insertResponse(rec: ResponseRecord): Promise<void> {
     INSERT INTO responses
       (participant_id, task_id, scenario_id, anchor_id, primary_dimension,
        secondary_dimension, repeat_of, chosen_hotel_id, options,
+       chosen_room_id, room, room_options,
        is_attention_check, attention_pass, timing, interactions)
     VALUES
       (${rec.participantId}, ${rec.taskId}, ${rec.scenarioId}, ${rec.anchorId},
        ${rec.primaryDimension}, ${rec.secondaryDimension}, ${rec.repeatOf},
        ${rec.chosenHotelId},
        ${sql.json(rec.options as unknown as Postgres.JSONValue)},
+       ${rec.chosenRoomId},
+       ${sql.json(rec.room as unknown as Postgres.JSONValue)},
+       ${sql.json(rec.roomOptions as unknown as Postgres.JSONValue)},
        ${rec.isAttentionCheck}, ${rec.attentionPass},
        ${sql.json(rec.timing as unknown as Postgres.JSONValue)},
        ${sql.json(rec.interactions as unknown as Postgres.JSONValue)})`;
@@ -240,6 +266,11 @@ interface RawResponse {
   repeat_of?: string | null;
   repeatOf?: string | null;
   options?: OptionVec[];
+  chosen_room_id?: string | null;
+  chosenRoomId?: string | null;
+  room?: RoomOffer | null;
+  room_options?: RoomVec[] | null;
+  roomOptions?: RoomVec[] | null;
   is_attention_check?: boolean;
   isAttentionCheck?: boolean;
   attention_pass?: boolean | null;
@@ -267,6 +298,9 @@ export interface AdminResponse {
   repeatOf: string | null;
   chosenHotelId: string;
   options: OptionVec[];
+  chosenRoomId: string | null;
+  room: RoomOffer | null;
+  roomOptions: RoomVec[];
   isAttentionCheck: boolean;
   attentionPass: boolean | null;
   timing: Record<string, unknown>;
@@ -300,6 +334,9 @@ function normResponse(r: RawResponse): AdminResponse {
     repeatOf: r.repeatOf ?? r.repeat_of ?? null,
     chosenHotelId: r.chosenHotelId ?? r.chosen_hotel_id ?? "",
     options: r.options ?? [],
+    chosenRoomId: r.chosenRoomId ?? r.chosen_room_id ?? null,
+    room: r.room ?? null,
+    roomOptions: r.roomOptions ?? r.room_options ?? [],
     isAttentionCheck: Boolean(r.isAttentionCheck ?? r.is_attention_check),
     attentionPass: r.attentionPass ?? r.attention_pass ?? null,
     timing: r.timing ?? {},
@@ -334,6 +371,7 @@ export async function fetchAllData(): Promise<{
   const rrows = await sql<RawResponse[]>`
     SELECT participant_id, task_id, scenario_id, anchor_id, primary_dimension,
            secondary_dimension, repeat_of, chosen_hotel_id, options,
+           chosen_room_id, room, room_options,
            is_attention_check, attention_pass, timing, interactions, submitted_at
     FROM responses ORDER BY submitted_at`;
 

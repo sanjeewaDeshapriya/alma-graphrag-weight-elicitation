@@ -47,6 +47,20 @@ DIMENSIONS = ["spatial", "accessibility", "facility", "economic", "disruption"]
 # silently, which is the one outcome that cannot be repaired later.
 FEATURES = DIMENSIONS + ["position"]
 
+# Stage-2 features. Unlike the hotel components these are all OBSERVED, and
+# `price_lkr` is in rupees — which is the point of exporting them. A coefficient
+# ratio against price converts any other coefficient into a willingness-to-pay,
+# so the stage-1 weights can be reported on a monetary scale instead of only up
+# to an arbitrary scale factor.
+ROOM_FEATURES = [
+    "price_delta_lkr",   # vs the cheapest offer in the same hotel
+    "breakfast",
+    "refundable",
+    "size_sqm",
+    "max_occupancy",
+    "room_position",
+]
+
 
 # --------------------------------------------------------------------------- #
 # Loading
@@ -79,7 +93,8 @@ def load_database(url: str) -> tuple[list[dict], list[dict]]:
             cur.execute(
                 "SELECT participant_id, task_id, scenario_id, anchor_id,"
                 " primary_dimension, secondary_dimension, repeat_of,"
-                " chosen_hotel_id, options, is_attention_check, attention_pass,"
+                " chosen_hotel_id, options, chosen_room_id, room, room_options,"
+                " is_attention_check, attention_pass,"
                 " timing, interactions, submitted_at"
                 " FROM responses ORDER BY submitted_at")
             responses = [dict(r) for r in cur.fetchall()]
@@ -182,6 +197,122 @@ def build_rows(participants: List[Dict[str, Any]],
     return rows, stats
 
 
+def build_room_rows(participants: List[Dict[str, Any]],
+                    responses: List[Dict[str, Any]],
+                    exclude_failed_attention: bool) -> tuple[list[dict], dict]:
+    """Stage 2: one row per room offer inside each chosen hotel.
+
+    A separate ranking dataset with its own qid space. The groups are small
+    (2-5 offers) and the choice set is whatever the chosen hotel actually
+    offered, so groups are not comparable in size across rows — which is normal
+    for a nested design and is why this is exported alongside, not merged into,
+    the hotel dataset.
+    """
+    demo_by_pid = {p["id"]: (p.get("demographics") or {}) for p in participants}
+    failed = {
+        get(r, "participant_id", "participantId")
+        for r in responses
+        if get(r, "is_attention_check", "isAttentionCheck")
+        and get(r, "attention_pass", "attentionPass") is False
+    }
+
+    rows: List[Dict[str, Any]] = []
+    qid = 0
+    no_room = 0
+
+    for r in responses:
+        pid = get(r, "participant_id", "participantId")
+        if get(r, "is_attention_check", "isAttentionCheck"):
+            continue
+        if exclude_failed_attention and pid in failed:
+            continue
+
+        offers = get(r, "room_options", "roomOptions") or []
+        if not offers or not any(o.get("chosen") for o in offers):
+            # Pre-two-stage responses, or a client that posted without a room.
+            no_room += 1
+            continue
+        qid += 1
+
+        timing = r.get("timing") or {}
+        demo = demo_by_pid.get(pid, {}) or {}
+        cheapest = min(o.get("price_lkr") or 0 for o in offers)
+        hotel_id = get(r, "chosen_hotel_id", "chosenHotelId")
+
+        for o in offers:
+            price = o.get("price_lkr") or 0
+            board = (o.get("board_type") or "").upper()
+            rows.append({
+                "qid": qid,
+                "participant_id": pid,
+                "task_id": get(r, "task_id", "taskId"),
+                "anchor_id": get(r, "anchor_id", "anchorId"),
+                "hotel_id": hotel_id,
+                "room_id": o.get("room_id"),
+                "room_name": o.get("name"),
+                "label": 1 if o.get("chosen") else 0,
+                "price_lkr": price,
+                "price_delta_lkr": price - cheapest,
+                "board_name": o.get("board_name"),
+                # RO is "Room Only"; anything else includes at least breakfast.
+                "breakfast": 0 if board == "RO" else 1,
+                "refundable": 1 if o.get("refundable") else 0,
+                "size_sqm": o.get("size_sqm"),
+                "max_occupancy": o.get("max_occupancy"),
+                "beds": o.get("beds"),
+                "room_position": o.get("displayed_position") or 0,
+                "n_offers": len(offers),
+                "panel_ms": (timing.get("panel_ms") or {}).get(hotel_id),
+                "room_revisions": timing.get("room_revisions"),
+                "decision_ms": timing.get("decision_ms"),
+                "age_band": demo.get("age_band"),
+                "occupation": demo.get("occupation"),
+                "salary_band": demo.get("salary_band"),
+                "home_area": demo.get("home_area"),
+            })
+
+    stats = {
+        "n_participants": len({r["participant_id"] for r in rows}),
+        "n_queries": qid,
+        "n_rows": len(rows),
+        "n_positive": sum(r["label"] for r in rows),
+        "responses_without_room": no_room,
+    }
+    return rows, stats
+
+
+def write_room_outputs(rows: List[Dict[str, Any]], stats: Dict[str, Any],
+                       out_dir: Path) -> None:
+    if not rows:
+        return
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    with (out_dir / "rooms.csv").open("w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+
+    with (out_dir / "rooms.jsonl").open("w", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+    ordered = sorted(rows, key=lambda r: (r["qid"], r["room_position"]))
+    with (out_dir / "rooms.ltr.txt").open("w", encoding="utf-8") as fh:
+        for r in ordered:
+            feats = " ".join(
+                f"{i}:{(r.get(f) if r.get(f) is not None else 0):g}"
+                for i, f in enumerate(ROOM_FEATURES, start=1)
+            )
+            fh.write(f"{r['label']} qid:{r['qid']} {feats} # {r['room_id']}\n")
+
+    sizes: Dict[int, int] = {}
+    for r in ordered:
+        sizes[r["qid"]] = sizes.get(r["qid"], 0) + 1
+    with (out_dir / "rooms_groups.txt").open("w", encoding="utf-8") as fh:
+        for q in sorted(sizes):
+            fh.write(f"{sizes[q]}\n")
+
+
 def pearson(xs: List[float], ys: List[float]) -> float:
     pairs = [(x, y) for x, y in zip(xs, ys) if x is not None and y is not None]
     n = len(pairs)
@@ -199,7 +330,8 @@ def pearson(xs: List[float], ys: List[float]) -> float:
 # Writing
 # --------------------------------------------------------------------------- #
 def write_outputs(rows: List[Dict[str, Any]], stats: Dict[str, Any],
-                  out_dir: Path, shown_only: bool) -> None:
+                  out_dir: Path, shown_only: bool,
+                  room_stats: Optional[Dict[str, Any]] = None) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     export = [r for r in rows if r["shown"]] if shown_only else rows
 
@@ -236,6 +368,20 @@ def write_outputs(rows: List[Dict[str, Any]], stats: Dict[str, Any],
             fh.write(f"{sizes[q]}\n")
 
     # --- dataset card ------------------------------------------------------
+    if room_stats and room_stats["n_rows"]:
+        room_section = (
+            f"| | |\n|---|---|\n"
+            f"| Queries (participant x task) | {room_stats['n_queries']} |\n"
+            f"| Rows (offers) | {room_stats['n_rows']} |\n"
+            f"| Positive labels | {room_stats['n_positive']} |\n"
+            f"| Responses with no room recorded | {room_stats['responses_without_room']} |"
+        )
+    else:
+        room_section = (
+            "No room-level responses in this export (all responses predate the "
+            "two-stage design, or were posted without a room)."
+        )
+
     corr_lines = []
     for i, a in enumerate(DIMENSIONS):
         for b in DIMENSIONS[i + 1:]:
@@ -269,6 +415,8 @@ Participants who failed the attention check: {stats['failed_attention_participan
 | `dataset.jsonl` | same rows as JSON |
 | `dataset.ltr.txt` | `<label> qid:<n> 1:.. 6:.. # <hotel_id>` (RankLib / XGBoost) |
 | `groups.txt` | group sizes in qid order |
+| `rooms.csv` / `rooms.jsonl` | stage 2: one row per room offer |
+| `rooms.ltr.txt` / `rooms_groups.txt` | stage 2 in ranking format |
 
 ## Features (in `dataset.ltr.txt` order)
 
@@ -276,6 +424,25 @@ Participants who failed the attention check: {stats['failed_attention_participan
 
 `position` is the 1-based rank the hotel was displayed at, or 0 if the
 participant had filtered it out. `shown` in the CSV distinguishes the two.
+
+## Stage 2 — room choice within the chosen hotel
+
+{room_section}
+
+Features (in `rooms.ltr.txt` order):
+
+{chr(10).join(f'{i}. `{f}`' for i, f in enumerate(ROOM_FEATURES, start=1))}
+
+Its own qid space, unrelated to the hotel `qid`. Groups are small (2-5) and
+vary in size, because the choice set is whatever the chosen hotel actually
+offered. `price_delta_lkr` is measured against the cheapest offer in the SAME
+hotel, so it is a within-hotel contrast and carries no hotel-level price
+information — that lives in the stage-1 `economic` component.
+
+The reason to fit this: `price_delta_lkr` is in rupees, so the ratio of any
+other coefficient to the price coefficient is a willingness-to-pay. That is
+what lets the five stage-1 weights be reported on a monetary scale rather than
+only up to an arbitrary scale factor.
 
 ## Caveats a user of this data must know
 
@@ -323,16 +490,28 @@ def main() -> None:
     rows, stats = build_rows(participants, responses, args.exclude_failed_attention)
     if not rows:
         raise SystemExit("No usable rows after filtering.")
-    write_outputs(rows, stats, args.out, args.shown_only)
+    room_rows, room_stats = build_room_rows(
+        participants, responses, args.exclude_failed_attention
+    )
+    write_outputs(rows, stats, args.out, args.shown_only, room_stats)
+    write_room_outputs(room_rows, room_stats, args.out)
 
     print(f"source            : {source}")
     print(f"participants      : {stats['n_participants']}")
     print(f"queries (groups)  : {stats['n_queries']}")
     print(f"rows (candidates) : {stats['n_rows']}")
     print(f"positive labels   : {stats['n_positive']}")
+    print(f"\nstage 2 (rooms)")
+    print(f"  queries         : {room_stats['n_queries']}")
+    print(f"  rows (offers)   : {room_stats['n_rows']}")
+    print(f"  no room recorded: {room_stats['responses_without_room']}")
+
+    written = ["dataset.csv", "dataset.jsonl", "dataset.ltr.txt", "groups.txt",
+               "dataset_card.md"]
+    if room_rows:
+        written += ["rooms.csv", "rooms.jsonl", "rooms.ltr.txt", "rooms_groups.txt"]
     print(f"\nwrote -> {args.out}")
-    for f in ("dataset.csv", "dataset.jsonl", "dataset.ltr.txt", "groups.txt",
-              "dataset_card.md"):
+    for f in written:
         print(f"  {f}")
 
 

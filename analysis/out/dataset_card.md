@@ -1,19 +1,19 @@
 # ALMA hotel-choice dataset
 
-Generated 2026-08-14T16:41:35+00:00
+Generated 2026-08-18T18:45:05+00:00
 
 ## Shape
 
 | | |
 |---|---|
-| Participants | 3 |
-| Queries (participant x task) | 16 |
-| Rows (candidates) | 410 |
-| Positive labels | 11 |
-| Rows per query | up to 25 |
+| Participants | 5 |
+| Queries (participant x task) | 14 |
+| Rows (candidates) | 489 |
+| Positive labels | 14 |
+| Rows per query | up to 34 |
 
-Attention-check tasks excluded from the dataset: 2.
-Participants who failed the attention check: 2
+Attention-check tasks excluded from the dataset: 1.
+Participants who failed the attention check: 1
 (rows dropped: 0).
 
 ## Files
@@ -24,6 +24,8 @@ Participants who failed the attention check: 2
 | `dataset.jsonl` | same rows as JSON |
 | `dataset.ltr.txt` | `<label> qid:<n> 1:.. 6:.. # <hotel_id>` (RankLib / XGBoost) |
 | `groups.txt` | group sizes in qid order |
+| `rooms.csv` / `rooms.jsonl` | stage 2: one row per room offer |
+| `rooms.ltr.txt` / `rooms_groups.txt` | stage 2 in ranking format |
 
 ## Features (in `dataset.ltr.txt` order)
 
@@ -37,6 +39,35 @@ Participants who failed the attention check: 2
 `position` is the 1-based rank the hotel was displayed at, or 0 if the
 participant had filtered it out. `shown` in the CSV distinguishes the two.
 
+## Stage 2 — room choice within the chosen hotel
+
+| | |
+|---|---|
+| Queries (participant x task) | 1 |
+| Rows (offers) | 5 |
+| Positive labels | 1 |
+| Responses with no room recorded | 13 |
+
+Features (in `rooms.ltr.txt` order):
+
+1. `price_delta_lkr`
+2. `breakfast`
+3. `refundable`
+4. `size_sqm`
+5. `max_occupancy`
+6. `room_position`
+
+Its own qid space, unrelated to the hotel `qid`. Groups are small (2-5) and
+vary in size, because the choice set is whatever the chosen hotel actually
+offered. `price_delta_lkr` is measured against the cheapest offer in the SAME
+hotel, so it is a within-hotel contrast and carries no hotel-level price
+information — that lives in the stage-1 `economic` component.
+
+The reason to fit this: `price_delta_lkr` is in rupees, so the ratio of any
+other coefficient to the price coefficient is a willingness-to-pay. That is
+what lets the five stage-1 weights be reported on a monetary scale rather than
+only up to an arbitrary scale factor.
+
 ## Caveats a user of this data must know
 
 - **Position is confounded with proximity.** Each task's list opens sorted by
@@ -47,8 +78,8 @@ participant had filtered it out. `shown` in the CSV distinguishes the two.
   pool: in Colombo, being close and being quick to reach mostly coincide).
   Treat them as one location signal unless you have a design that separates
   them. Observed correlations at or above 0.5 in this export:
-  - `spatial` vs `accessibility`: r = 0.90
-  - `facility` vs `economic`: r = -0.69
+  - `spatial` vs `accessibility`: r = 0.91
+  - `facility` vs `economic`: r = -0.70
 - **Choice sets are participant-dependent.** Search and filters were available,
   so the candidates actually on screen differ between participants for the same
   task. `shown`, `n_shown`, `final_sort`, `final_query` and `final_max_price`

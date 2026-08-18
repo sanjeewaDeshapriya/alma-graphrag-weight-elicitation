@@ -1,13 +1,43 @@
 # Weight-Elicitation Study
 
 A small **Discrete Choice Experiment (DCE)** for the ALMA-GraphRAG project. It
-shows travellers a scenario and a set of real Colombo hotels, records which one
-they would book (best-of-5) plus fine-grained timing, and from that data we
+shows travellers a scenario and the whole pool of real Colombo hotels, records
+the booking they would make plus fine-grained timing, and from that data we
 **learn the composite-score weights** instead of hand-tuning them.
 
 The five sub-scores it calibrates are the same ones the retriever uses:
 `spatial · accessibility · facility · economic · disruption`
 (see `../../src/graph/retriever.py`, `ScoringWeights`).
+
+## The choice is two-stage
+
+A booking is not "pick a hotel" — it is "pick a hotel, then pick a room in it",
+and the study mirrors that:
+
+| Stage | Alternatives | Attributes | Role |
+|---|---|---|---|
+| 1 · hotel | the whole pool (~34) | the five components, **hidden** from the browser | the weights |
+| 2 · room | the 2–5 live offers in the chosen hotel | price (LKR), board basis, refundability, size, beds, occupancy — all **shown** | the money scale |
+
+Stage 2 is not decoration. Stage-1 clicks identify the five weights only up to
+an arbitrary scale factor. The room step carries an explicit price attribute in
+rupees, so the trade-offs inside it — what a guest pays to add breakfast, or to
+keep free cancellation — convert coefficients into willingness-to-pay and put
+the whole weight vector on a monetary scale. Carrying a price attribute for
+exactly this reason is standard DCE practice.
+
+Both stages come from live LiteAPI data, joined offline:
+
+- `POST /hotels/rates` → the commercial side of each offer (price, board,
+  refundable, cancellation deadline) and a supplier room label.
+- `GET /data/hotel` → the content side (proper room name, floor area, bed
+  configuration, occupancy, photos, in-room amenities), plus the hotel's full
+  facility list, image gallery, check-in times and guest-sentiment breakdown.
+- `rates[].mappedRoomId` joins onto `rooms[].id`, and resolves for essentially
+  every live offer.
+
+Hotels offering fewer than two live rooms are dropped by the generator: a forced
+non-choice is not an observation.
 
 ## Why it's decoupled
 
@@ -45,12 +75,28 @@ psql "$DATABASE_URL" -f sql/schema.sql
 
 ## Flow
 
-`/` consent → `/demographics` (optional) → `/study` (best-of-5 tasks) → `/done`.
+`/` consent → `/demographics` (optional) → `/study` → `/done`.
 
-Captured per choice: chosen hotel, the full option set with **hidden** component
-vectors (re-derived server-side so the browser never sees them), attention-check
-pass/fail, and timing (render → first-interaction → decision, per-option dwell,
-selection revisions).
+Within a task: browse/search/sort the pool → open a hotel to see its gallery,
+full facilities, guest ratings and rooms → pick a room → **Book this room** →
+Next.
+
+Captured per choice:
+
+- **Stage 1** — chosen hotel and the full option set with **hidden** component
+  vectors, plus the position each candidate was displayed at.
+- **Stage 2** — chosen room and every sibling offer in that hotel with its
+  price, board, refundability, size and occupancy.
+- Attention-check pass/fail.
+- Timing — render → first-interaction → decision, per-card hover dwell,
+  **per-hotel detail-panel dwell**, the order hotels were opened in, every room
+  pick, and revisions to the confirmed choice.
+- An ordered interaction log (search, sort, price filter, open/close hotel,
+  gallery, select room, confirm).
+
+Both the component vectors and the room attributes are re-derived server-side
+from the frozen material, so the browser can neither see the stage-1 features
+nor assert a price the material does not agree with.
 
 ## Deploy (Vercel + Neon)
 
@@ -73,9 +119,18 @@ the deployment is independent of the main ALMA stack (no Neo4j/pgvector). The
 
 ## Status
 
-- **Done:** app scaffold, full study flow, timing capture, JSONL/Postgres
+- **Done:** app scaffold, full two-stage study flow, timing capture, JSONL/Postgres
   persistence, admin dashboard (`/admin`, token-gated) with CSV/JSON export,
-  LiteAPI material generator (real Colombo hotels — image, facilities,
-  description, reviews), production build verified.
+  LiteAPI material generator (real Colombo hotels — gallery, full facilities,
+  guest sentiment, check-in times, and live bookable rooms), ranking-dataset
+  exporter for both stages, production build verified.
 - **Next:** deploy to Vercel + Neon; `analysis/fit_weights.py` (conditional
-  logit → learned weights → re-run `evaluation/run_eval.py`).
+  logit → learned weights → re-run `evaluation/run_eval.py`), fitting stage 2
+  for the price coefficient and rescaling the stage-1 weights against it.
+
+### Schema note
+
+The room columns (`chosen_room_id`, `room`, `room_options`) are added by
+idempotent `ALTER TABLE ... IF NOT EXISTS` statements that `lib/db.ts` applies
+on the first database call of each process, so an existing Neon database picks
+them up on the next deploy with no manual migration.
